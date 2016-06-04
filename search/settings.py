@@ -12,15 +12,36 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 
 import os
 import environ
+from kombu import Queue
 
 root = environ.Path(__file__) - 2
 BASE_DIR = str(root)
 
-env = environ.Env(DEBUG=(bool, False))
 
+# Loading key-values from .env
+
+env = environ.Env(DEBUG=(bool, False))
 SECRET_KEY = env.str('SECRET_KEY', 'not-defined-secret-key')
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[])
 DEBUG = env.bool('DEBUG', True)
+
+# Celery settings
+
+BROKER_URL = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
+# CELERY_QUEUES = (
+#     Queue('site_parser', routing_key='site_parser'),
+# )
+#
+# CELERY_ROUTES = {
+#     'site_parser.tasks.test': {
+#         'queue': 'site_parser',
+#         'routing_key': 'site_parser.routing',
+#     },
+# }
 
 # Application definition
 
@@ -31,6 +52,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'site_parser',
+    'djcelery',
 ]
 
 MIDDLEWARE_CLASSES = [
