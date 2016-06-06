@@ -1,0 +1,14 @@
+<div>
+  <h1>Look what we've found for you:</h1>
+  <div class="thumbnail" ng-repeat="result in searchCtrl.searchResults">
+    <div class="caption">
+      <div class="result-header">
+        <h4><a href="#">{{ result.header }}</a></h4>
+      </div>
+      <div class="result-preview">
+        <p>{{ result.preview }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
