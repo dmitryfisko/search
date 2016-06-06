@@ -4,7 +4,7 @@ from celery import shared_task
 
 from site_parser.loader.loader import SiteLoader
 from site_parser.loader.utils import Coordinator
-from site_parser.utils import fix_multiprocessing, check_url, fix_schema
+from site_parser.utils import fix_multiprocessing, check_url, fix_schema, convert_to_int
 
 
 @shared_task
@@ -15,7 +15,12 @@ def start_parser(url, depth):
 
     url = fix_schema(url)
     if check_url(url):
-        coord = Coordinator()
+        params = {}
+        depth = convert_to_int(depth)
+        if depth:
+            params['depth'] = depth
+
+        coord = Coordinator(**params)
         loader = SiteLoader(coord)
         loader.start(url)
 

@@ -16,9 +16,22 @@ def fix_multiprocessing(**kwargs):
 
 
 def fix_schema(url):
-    if re.match('^http(s?)://', url):
+    if not re.match('^http(s?)://', url):
         url = 'http://' + url
     return url
+
+
+def convert_to_int(num):
+    try:
+        num = int(num)
+        if num <= 0:
+            return None
+        else:
+            return True
+    except TypeError:
+        return None
+    except ValueError:
+        return None
 
 
 def check_url(url):

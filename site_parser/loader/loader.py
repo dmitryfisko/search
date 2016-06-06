@@ -8,7 +8,7 @@ from site_parser.loader.utils import QueueItem, Utils, UNLIMITED_DEPTH
 
 class SiteLoader:
     QUEUE_MAX_SIZE = 100
-    WORKER_POOL_SIZE = 10
+    WORKER_POOL_SIZE = 1
 
     def __init__(self, coordinator):
         self._coord = coordinator
@@ -23,7 +23,7 @@ class SiteLoader:
         return any(workers_state)
 
     def _add_to_site_words_frequency(self, site, words_counter):
-        if self._coord.max_depth < UNLIMITED_DEPTH:
+        if self._coord.depth_limit < UNLIMITED_DEPTH:
             return
 
         site.clear_dict()

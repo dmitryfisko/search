@@ -28,7 +28,7 @@ class QueueItem:
 
 
 class Coordinator:
-    def __init__(self, depth=UNLIMITED_DEPTH, requests_delay=1):
+    def __init__(self, depth=UNLIMITED_DEPTH, requests_delay=0.5):
         self._prev_time = 0
         self._requests_delay = requests_delay
         self.lock = RLock()
@@ -77,7 +77,7 @@ class Utils:
     def get_or_create_url_model(path):
         url_exist = Url.objects.filter(path=path).exists()
         if not url_exist:
-            url = Url(path)
+            url = Url(path=path)
             url.save()
         else:
             url = Url.objects.get(path=path)
@@ -105,6 +105,11 @@ class Utils:
             word = Word.objects.get(value=value)
 
         return word
+
+    @staticmethod
+    def clean_text(soup):
+        [s.decompose() for s in soup(['script', 'style'])]
+        return ' '.join(soup.stripped_strings)
 
     @staticmethod
     def send_request(url, request_timeout):
@@ -140,3 +145,4 @@ class Utils:
             url = link.get('href')
             if Utils.extract_domain(url) == domain:
                 filtered_hrefs.append(url)
+        return filtered_hrefs

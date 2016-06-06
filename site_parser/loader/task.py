@@ -1,10 +1,6 @@
 import logging
 import threading
 import time
-from _socket import timeout
-from http.client import HTTPException
-from urllib.error import HTTPError, URLError
-from urllib.request import urlopen, Request
 
 from bs4 import BeautifulSoup
 
@@ -26,7 +22,7 @@ class UrlLoaderTask(threading.Thread):
         return self._is_active_job
 
     def _add_words_to_site_words_counter(self, tokens):
-        self._site_words_counter = {**self._site_words_counter, **tokens}
+        self._site_words_counter.update({**self._site_words_counter, **tokens})
 
     def _is_url_need_parsing(self, depth):
         if depth > self._coord.depth_limit:
@@ -62,12 +58,13 @@ class UrlLoaderTask(threading.Thread):
         tokenizer = Tokenizer()
 
         while True:
-            url, depth = self._queue.get()
+            queue_item = self._queue.get()
             self._is_active_job = True
-            if isinstance(url, str) and url == 'quit':
+            if isinstance(queue_item, str) and queue_item == 'quit':
                 self._is_active_job = False
                 break
 
+            url, depth = queue_item.url, queue_item.depth
             if not self._is_url_need_parsing(depth):
                 continue
 
@@ -79,14 +76,14 @@ class UrlLoaderTask(threading.Thread):
             response = Utils.send_request(url, self.REQUEST_TIMEOUT)
             if response:
                 raw_html = response.read().decode('utf8')
-                soup = BeautifulSoup(raw_html)
-                raw_text = soup.get_text()
-                tokens = tokenizer.tokenize(raw_text)
+                soup = BeautifulSoup(raw_html, 'lxml')
+                text = Utils.clean_text(soup)
+                tokens = tokenizer.tokenize(text)
 
                 url_model = Utils.get_or_create_url_model(url)
-                self._process_new_links(soup, url_model, depth)
+                self._process_new_links(url_model, soup, depth)
                 self._process_tokens(tokens, url_model)
-                url_model.raw_text = raw_text
+                url_model.text = text
                 url_model.save()
 
             self._is_active_job = False
