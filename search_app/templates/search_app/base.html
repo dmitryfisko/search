@@ -8,9 +8,9 @@
     <title>&lt;/search&gt</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">    
-    <link rel="stylesheet" href="{% static "search_app/css/style.css" %}">  
-    
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static "search_app/css/style.css" %}">
+
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
@@ -18,18 +18,20 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <!-- Angular JS -->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular-route.js"></script>
-    <script src={% static "search_app/js/angular-ui-router.min.js" %}></script>
-    <script src="https://code.angularjs.org/1.4.5/angular-route.js"></script>
-    <script type="text/javascript" src="http://cdn.jsdelivr.net/restangular/latest/restangular.js"></script>
+    <script src="{% static "search_app/js/vendor/angular-ui-router.min.js" %}"></script>
+    <script src="{% static "search_app/js/vendor/underscore-min.js" %}"></script>
+    <!-- {% block extra_js %}{% endblock %} -->
     <script src="{% static "search_app/js/app.js" %}"></script>
+    <script src="{% static "search_app/js/pager-service.js" %}"></script>
+    <script src="{% static "search_app/js/search-field-controller.js" %}"></script>
+    <script src="{% static "search_app/js/search-results-controller.js" %}"></script>
   </head>
-  
+
   <body>
     <div class="site-wrapper">
       <div class="site-wrapper-inner">
         <div class="cover-container">
-          <div ui-view ng-controller="SearchController as searchCtrl"></div>
+          <div ui-view></div>
         </div>
       </div>
     </div>

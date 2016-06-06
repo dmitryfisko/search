@@ -6,34 +6,32 @@ app.config(function ($stateProvider, $urlRouterProvider) {
     $stateProvider
     .state('index', {
         url: "/",
-        templateUrl: "/static/search_app/html/index.html"
+        templateUrl: "/static/search_app/html/index.html",
+        controller: 'SearchFieldController'
     })
     .state('results', {
         url: "/results",
-        templateUrl: "/static/search_app/html/results.html"
+        templateUrl: "/static/search_app/html/results.html",
+        controller: 'SearchResultsController'
     });
-})
-
-app.controller('SearchController', function($http, $window, $state) {
-    var self = this;
-    var searchString = '';
-    var searchResults = [];
-    
-    this.search = function() {
-        var data ={
-            searchString: self.searchString
-        };
-        // debugger;
-            
-        $http.post('/search', data, null)
-        .success(function(response) {
-            // debugger;
-            console.log(response);
-            self.searchResults = response;
-            $state.go('results');
-        }
-        ).error(function(response) {
-            // debugger;
-        });
-    }
 });
+
+app.service('searchResultsService', SearchResultsService);
+app.service('pagerService', PagerService);
+
+function SearchResultsService() {
+    var results = [];
+
+    var getResults = function() {
+        return results;
+    };
+
+    var initResults = function(data) {
+        results = data;
+    }
+
+    return {
+        getResults: getResults,
+        initResults: initResults
+    };
+}

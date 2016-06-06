@@ -141,5 +141,6 @@ USE_TZ = True
 STATIC_URL='/static/'
 STATICFILES_DIRS = [
     '/static/',
-    'search_app/static/'
+    'search_app/static/',
+    'search_engine/static/'
 ]

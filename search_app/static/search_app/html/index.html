@@ -11,10 +11,11 @@
   </div>
 </div>
 
-<div class="inner cover">
+<div class="inner cover" ng-controller="SearchFieldController as searchCtrl">
   <h1 class="cover-heading">We'll find everything</h1>
   <div class="form-group">
-    <input type="text" class="form-control" ng-model="searchCtrl.searchString" ng-cloak>
+    <input type="text" class="form-control" ng-model="searchCtrl.searchString"
+           ng-cloak ng-keypress="searchCtrl.keyPress($event)">
     <p class="lead search-field">
       <a href="#" class="btn btn-lg btn-default" ng-click="searchCtrl.search()">Search!</a>
     </p>

@@ -1,14 +1,32 @@
-<div>
+<div ng-controller="SearchResultsController as resultsCtrl">
   <h1>Look what we've found for you:</h1>
-  <div class="thumbnail" ng-repeat="result in searchCtrl.searchResults">
+  <div class="thumbnail" ng-repeat="result in resultsCtrl.pageResults">
     <div class="caption">
-      <div class="result-header">
-        <h4><a href="#">{{ result.header }}</a></h4>
+      <div class="result-title">
+        <h4><a href="{{ result.link }}">{{ result.title }}</a></h4>
       </div>
-      <div class="result-preview">
-        <p>{{ result.preview }}</p>
+      <div class="result-snippe">
+        <p>{{ result.snippet }}</p>
       </div>
     </div>
   </div>
-</div>
 
+  <!-- pager -->
+  <ul ng-if="resultsCtrl.pager.pages.length" class="pagination">
+    <li ng-class="{disabled:resultsCtrl.pager.currentPage === 1}">
+      <a ng-click="resultsCtrl.setPage(1)">First</a>
+    </li>
+    <li ng-class="{disabled:resultsCtrl.pager.currentPage === 1}">
+      <a ng-click="resultsCtrl.setPage(resultsCtrl.pager.currentPage - 1)">Previous</a>
+    </li>
+    <li ng-repeat="page in resultsCtrl.pager.pages" ng-class="{active:resultsCtrl.pager.currentPage === page}">
+      <a ng-click="resultsCtrl.setPage(page)">{{page}}</a>
+    </li>
+    <li ng-class="{disabled:resultsCtrl.pager.currentPage === resultsCtrl.pager.totalPages}">
+      <a ng-click="resultsCtrl.setPage(resultsCtrl.pager.currentPage + 1)">Next</a>
+    </li>
+    <li ng-class="{disabled:resultsCtrl.pager.currentPage === resultsCtrl.pager.totalPages}">
+      <a ng-click="resultsCtrl.setPage(resultsCtrl.pager.totalPages)">Last</a>
+    </li>
+  </ul>
+</div>
