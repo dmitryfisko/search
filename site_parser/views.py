@@ -6,13 +6,13 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
-from site_parser.tasks import test
+from site_parser.tasks import start_parser
 
 
 class AddUrlReceiveView(View):
     @staticmethod
     def post(request, bot_token):
-        test.delay(bot_token)
+        start_parser.delay(bot_token)
         return JsonResponse({}, status=200)
 
     @method_decorator(csrf_exempt)
