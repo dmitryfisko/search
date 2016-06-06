@@ -1,20 +1,49 @@
+import logging
 import string
+from _socket import timeout
 from collections import Counter
+from http.client import HTTPException
+from urllib.error import HTTPError, URLError
 from urllib.parse import urlparse
+from urllib.request import Request, urlopen
 
 import pymorphy2
+from multiprocessing import RLock
 
+import time
 from nltk import word_tokenize, WordNetLemmatizer
 
 from site_parser.models import Url, Site, Word
 
 UNLIMITED_DEPTH = 10000
 
+LOGGING_ENABLED = False
+logger = logging.getLogger(__name__)
 
-class QueueUrl:
+
+class QueueItem:
     def __init__(self, url, depth):
         self.url = url
         self.depth = depth
+
+
+class Coordinator:
+    def __init__(self, depth=UNLIMITED_DEPTH, requests_delay=1):
+        self._prev_time = 0
+        self._requests_delay = requests_delay
+        self.lock = RLock()
+        self.depth_limit = depth
+
+    def next_wait_time(self):
+        with self.lock:
+            curr_time = time.time()
+            passed_time = curr_time - self._prev_time
+
+            if passed_time >= self._requests_delay:
+                self._prev_time = curr_time
+                return 0
+            else:
+                return self._requests_delay - passed_time
 
 
 class Tokenizer:
@@ -43,46 +72,71 @@ class Tokenizer:
         return Counter(tokens)
 
 
-def get_or_create_url_model(path):
-    url_exist = Url.objects.filter(path=path).exists()
-    if not url_exist:
-        url = Url(path)
-        url.save()
-    else:
-        url = Url.objects.get(path=path)
+class Utils:
+    @staticmethod
+    def get_or_create_url_model(path):
+        url_exist = Url.objects.filter(path=path).exists()
+        if not url_exist:
+            url = Url(path)
+            url.save()
+        else:
+            url = Url.objects.get(path=path)
 
-    return url
+        return url
 
+    @staticmethod
+    def get_or_create_site_model(domain):
+        site_exist = Site.objects.filter(domain=domain).exists()
+        if not site_exist:
+            site = Site(domain=domain)
+            site.save()
+        else:
+            site = Site.objects.get(domain=domain)
 
-def get_or_create_site_model(domain):
-    site_exist = Site.objects.filter(domain=domain).exists()
-    if not site_exist:
-        site = Site(domain=domain)
-        site.save()
-    else:
-        site = Site.objects.get(domain=domain)
+        return site
 
-    return site
+    @staticmethod
+    def get_or_create_word_model(value):
+        word_exist = Word.objects.filter(value=value).exists()
+        if not word_exist:
+            word = Word(value=value)
+            word.save()
+        else:
+            word = Word.objects.get(value=value)
 
+        return word
 
-def get_or_create_word_model(value):
-    word_exist = Word.objects.filter(value=value).exists()
-    if not word_exist:
-        word = Word(value=value)
-        word.save()
-    else:
-        word = Word.objects.get(value=value)
+    @staticmethod
+    def send_request(url, request_timeout):
+        try:
+            request = Request(url)
+            request.add_header('User-Agent', 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)')
+            response = urlopen(request, timeout=request_timeout)
+            return response
+        except HTTPError:
+            error = 'url request HTTPException'
+        except HTTPException:
+            error = 'url request HTTPException'
+        except timeout:
+            error = 'url request HTTPException'
+        except URLError:
+            error = 'url request HTTPException'
+        except Exception:
+            error = 'url request unhandled request error'
 
-    return word
+        if LOGGING_ENABLED:
+            logger.error(error)
 
+        return None
 
-def extract_domain(url):
-    return urlparse(url).netloc
+    @staticmethod
+    def extract_domain(url):
+        return urlparse(url).netloc
 
-
-def filter_links_from_domain(links, domain):
-    filtered_hrefs = []
-    for link in links:
-        url = link.get('href')
-        if extract_domain(url) == domain:
-            filtered_hrefs.append(url)
+    @staticmethod
+    def filter_links_from_domain(links, domain):
+        filtered_hrefs = []
+        for link in links:
+            url = link.get('href')
+            if Utils.extract_domain(url) == domain:
+                filtered_hrefs.append(url)
