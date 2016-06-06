@@ -3,7 +3,7 @@ from collections import Counter
 from time import sleep
 
 from site_parser.loader.task import UrlLoaderTask
-from site_parser.loader.utils import QueueUrl
+from site_parser.loader.utils import QueueUrl, extract_domain, get_or_create_site_model, UNLIMITED_DEPTH
 
 
 class SiteLoader:
@@ -17,14 +17,27 @@ class SiteLoader:
     def cancel_task(self):
         self._task_canceled = True
 
-    def _active_job(self, worker_threads):
+    @staticmethod
+    def _active_job(worker_threads):
         workers_state = [worker.is_active_job() for worker in worker_threads]
         return any(workers_state)
 
+    def _add_to_site_words_frequency(self, site, words_counter):
+        if self._coord.max_depth < UNLIMITED_DEPTH:
+            return
+
+        site.clear_dict()
+        site.set_words_frequency(words_counter)
+
     def start(self, start_url):
+        self._coord.domain = extract_domain(start_url)
+        site = get_or_create_site_model(self._coord.domain)
+        site.parse_iteration += 1
+        self._coord.parse_iteration = site.parse_iteration
+
         words_counter = Counter()
         que = queue.Queue(maxsize=self.QUEUE_MAX_SIZE)
-        worker_threads = self._build_worker_pool(que, words_counter, self.WORKER_POOL_SIZE)
+        worker_threads = self._build_worker_pool(que, words_counter, site, self.WORKER_POOL_SIZE)
 
         url = QueueUrl(start_url, 0)
         que.put(url)
@@ -36,10 +49,13 @@ class SiteLoader:
         for worker in worker_threads:
             worker.join()
 
-    def _build_worker_pool(self, que, words_counter, size):
+        self._add_to_site_words_frequency(site, words_counter)
+        site.save()
+
+    def _build_worker_pool(self, que, words_counter, site, pool_size):
         workers = []
-        for _ in range(size):
-            worker = UrlLoaderTask(que, words_counter, self._coord)
+        for _ in range(pool_size):
+            worker = UrlLoaderTask(que, words_counter, site, self._coord)
             worker.start()
             workers.append(worker)
         return workers

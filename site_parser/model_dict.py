@@ -11,13 +11,17 @@ class Dictionary(models.Model):
         self.name = name
 
     @staticmethod
-    def getDict(name):
+    def get_dict(name):
         """Get the Dictionary of the given name.
 
         """
         df = Dictionary.objects.select_related().get(name=name)
 
         return df
+
+    def set_words_frequency(self, counter):
+        for key, value in counter.items():
+            self[key] = value
 
     def __getitem__(self, key):
         """Returns the value of the selected key.
@@ -125,7 +129,7 @@ class Dictionary(models.Model):
         except KeyValuePair.DoesNotExist:
             return False
 
-    def clear(self):
+    def clear_dict(self):
         """Deletes all keys in the Dictionary.
 
         """
