@@ -1,0 +1,8 @@
+{"response": [
+    {% for item in results %}
+        { "title": "{{ item.title|escapejs }}" ,
+          "url": "{{ item.url|escapejs }}" ,
+          "text": "{{ item.text|escapejs }}" }
+        {% if forloop.last %}{% else %} , {% endif %}
+    {% endfor %}
+]}

@@ -11,9 +11,9 @@ import pymorphy2
 from multiprocessing import RLock
 
 import time
-from nltk import word_tokenize, WordNetLemmatizer
+from nltk import word_tokenize, WordNetLemmatizer, defaultdict
 
-from site_parser.models import Url, Site, Word
+from site_parser.models import Site, Page
 
 UNLIMITED_DEPTH = 10000
 
@@ -46,43 +46,46 @@ class Coordinator:
                 return self._requests_delay - passed_time
 
 
-class Tokenizer:
+class UrlManager:
     def __init__(self):
-        self._ru_lemma = pymorphy2.MorphAnalyzer()
-        self._en_lemma = WordNetLemmatizer()
+        self.counter = 0
+        self.urls = dict()
+        self.connections = defaultdict(list)
+        self._lock = RLock()
 
-    @staticmethod
-    def _strip_word(word):
-        return word.strip(string.punctuation)
+    def __contains__(self, url):
+        return url in self.urls
 
-    def _lemmatize_word(self, word):
-        word = self._ru_lemma.parse(word)[0].normal_form
-        word = self._en_lemma.lemmatize(word)
-        return word
+    def add(self, url):
+        ind = self.urls.get(url)
+        if not ind:
+            with self._lock:
+                self.counter += 1
+                ind = self.counter
+            self.urls[url] = ind
+        return ind
 
-    def tokenize(self, raw_text):
-        raw_tokens = word_tokenize(raw_text.lower())
-        tokens = []
-        for token in raw_tokens:
-            token = self._strip_word(token)
-            if token:
-                token = self._lemmatize_word(token)
-                tokens.append(token)
+    def connect_urls(self, url1, url2):
+        if url1 > url2:
+            url1, url2 = url2, url1
 
-        return Counter(tokens)
+        ind1 = self.add(url1)
+        ind2 = self.add(url2)
+
+        self.connections[ind1].append(ind2)
 
 
 class Utils:
     @staticmethod
-    def get_or_create_url_model(path):
-        url_exist = Url.objects.filter(path=path).exists()
-        if not url_exist:
-            url = Url(path=path)
-            url.save()
+    def get_or_create_page_model(url):
+        page_exist = Page.objects.filter(url=url).exists()
+        if not page_exist:
+            page = Page(url=url)
+            page.save()
         else:
-            url = Url.objects.get(path=path)
+            page = Page.objects.get(url=url)
 
-        return url
+        return page
 
     @staticmethod
     def get_or_create_site_model(domain):
@@ -96,28 +99,17 @@ class Utils:
         return site
 
     @staticmethod
-    def get_or_create_word_model(value):
-        word_exist = Word.objects.filter(value=value).exists()
-        if not word_exist:
-            word = Word(value=value)
-            word.save()
-        else:
-            word = Word.objects.get(value=value)
-
-        return word
-
-    @staticmethod
     def clean_text(soup):
         [s.decompose() for s in soup(['script', 'style'])]
         return ' '.join(soup.stripped_strings)
 
     @staticmethod
-    def send_request(url, request_timeout):
+    def download_url(url, request_timeout):
         try:
             request = Request(url)
             request.add_header('User-Agent', 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)')
             response = urlopen(request, timeout=request_timeout)
-            return response
+            return response.read().decode('utf8')
         except HTTPError:
             error = 'url request HTTPException'
         except HTTPException:

@@ -16,6 +16,8 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 
+from search_api.views import SearchReceiveView
+
 urlpatterns = [
     url(r'^default_admin/', admin.site.urls),
     url(r'^admin/', include('urls_config.urls')),
