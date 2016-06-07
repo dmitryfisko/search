@@ -7,7 +7,7 @@ from urls_config.models import Url
 from django.shortcuts import render
 
 class UrlList(ListView):
-    import pdb; pdb.set_trace()
+    # import pdb; pdb.set_trace()
     model = Url
 
 class UrlCreate(TemplateView):
