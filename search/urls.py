@@ -16,7 +16,10 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 
+from search_api.views import SearchReceiveView
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^url/', include('site_parser.urls', namespace='site_parser'))
+    url(r'^url/', include('site_parser.urls', namespace='site_parser')),
+    url(r'^search', SearchReceiveView.as_view(), name='search')
 ]

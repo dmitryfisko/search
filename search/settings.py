@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'site_parser',
+    'search_api',
     'djcelery',
     'django_hstore',
 ]
