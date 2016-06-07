@@ -4,20 +4,39 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.core.urlresolvers import reverse_lazy
 from django.db import models
 from urls_config.models import Url
+from django.shortcuts import render
 
 class UrlList(ListView):
+    import pdb; pdb.set_trace()
     model = Url
 
-class UrlCreate(CreateView):
+class UrlCreate(TemplateView):
+    def get(self, request):
+        return render(request, 'urls_config/url_new.html')
+
+    def post(self, request):
+        # Send request to site parser
+        path = request.POST.get('path')
+        is_already_in_index = False
+
+        text = ''
+        if not is_already_in_index:
+            text = 'URL will indexed soon'
+        else:
+            text = 'This URL was already indexed, but thanks for try'
+
+        context = {
+            'text': text
+        }
+
+        return render(request, 'urls_config/added_to_index.html', context)
+
+class UrlUpdate(UpdateView):
+    # import pdb; pdb.set_trace()
     model = Url
     success_url = reverse_lazy('url_list')
     fields = ['path', 'title']
 
-class UrlUpdate(UpdateView):
-    model = Url
-    success_url = reverse_lazy('url_edit')
-    fields = ['path', 'title']
-
 class UrlDelete(DeleteView):
     model = Url
-    success_url = reverse_lazy('url_delete')
+    success_url = reverse_lazy('url_list')

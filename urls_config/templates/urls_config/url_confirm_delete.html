@@ -1,4 +1,14 @@
+{% extends 'urls_config/base.html' %}
+
+{% block content %}
+
+<div class="">
+    Are you sure you want to delete URL
+    <a href="{{ object.path }}" class="btn btn-link">{{ object.title }}</a> ?
+</div>
 <form method="post">{% csrf_token %}
-    Are you sure you want to delete "{{ object }}" ?
-    <input type="submit" value="Submit" />
+    <button type="submit" class="btn btn-success">Yes</button>
+    <a href="{% url "url_list" %}" class="btn btn-danger">No</a>
 </form>
+
+{% endblock %}

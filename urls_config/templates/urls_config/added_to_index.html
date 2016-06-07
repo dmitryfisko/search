@@ -1,0 +1,8 @@
+{% extends 'urls_config/base.html' %}
+
+{% block content %}
+    <div>
+        {{ text }}
+    </div>
+    <a href="{% url 'url_list' %}" class="btn btn-link">&lt;&lt; Go to main page</a>
+{% endblock %}

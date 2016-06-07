@@ -1,11 +1,33 @@
-<h1>Urls:</h1>
-<ul>
-    {% for url in object_list %}
-    <li>{{ url.path }}  :
-    <a href="{% url "url_edit" url.id %}">{{ url.title }}</a>
-    <a href="{% url "url_delete" url.id %}">delete</a>
-    </li>
-    {% endfor %}
-</ul>
+{% extends 'urls_config/base.html' %}
 
-<a href="{% url "url_new" %}">New</a>
+{% block content %}
+
+<a href="{% url "url_new" %}">Index new URL</a>
+
+<h1>Urls:</h1>
+<div class="text-right">
+    URLs indexed: {{ object_list | length }}
+</div>
+<table class="table">
+    <thead>
+        <th>URL</th>
+        <th>Title</th>
+        <th>Document</th>
+        <th>Actions</th>
+    </thead>
+    <tbody>
+        {% for url in object_list %}
+        <tr>
+            <td>{{ url.path }}</td>
+            <td>{{ url.title }}</td>
+            <td><a href="{{ url.path }}" class="btn btn-success">Show page</a></td>
+            <td>
+                <a href="{% url "url_edit" url.pk %}" class="btn btn-primary">Edit</a>
+                <a href="{% url "url_delete" url.pk %}" class="btn btn-danger">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
