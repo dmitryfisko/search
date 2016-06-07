@@ -1,0 +1,25 @@
+{% block content %}
+
+<button type="button" class="btn btn-success">Index new URL</button>
+<table class="table">
+    <thead>
+        <th>URL</th>
+        <th>Title</th>
+        <th>Document</th>
+        <th>Actions</th>
+    </thead>
+    <tbody>
+        {% for url in urls %}
+        <tr>
+            <td>url.url</td>
+            <td>url.title</td>
+            <td>url.document</td>
+            <td>
+                <button type="button" class="btn btn-primary"></button>
+            </td>
+
+        </tr>
+    </tbody>
+</table>
+
+{% endblock %}

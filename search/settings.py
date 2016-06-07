@@ -52,9 +52,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.sites',
+    'search_app',
+    'search_engine',
     'site_parser',
     'djcelery',
+    'rest_framework'
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -144,3 +146,6 @@ STATICFILES_DIRS = [
     'search_app/static/',
     'search_engine/static/'
 ]
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
