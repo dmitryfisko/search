@@ -3,12 +3,12 @@ from collections import Counter
 from time import sleep
 
 from site_parser.loader.task import UrlLoaderTask
-from site_parser.loader.utils import QueueItem, Utils, UNLIMITED_DEPTH
+from site_parser.loader.utils import QueueItem, Utils, UNLIMITED_DEPTH, UrlManager
 
 
 class SiteLoader:
-    QUEUE_MAX_SIZE = 100
-    WORKER_POOL_SIZE = 1
+    # QUEUE_MAX_SIZE = 100
+    WORKER_POOL_SIZE = 10
 
     def __init__(self, coordinator):
         self._coord = coordinator
@@ -29,24 +29,21 @@ class SiteLoader:
         site.clear_dict()
         site.set_words_frequency(words_counter)
 
-    def _add_first_queue_item(self, url, que, site):
+    @staticmethod
+    def _add_first_queue_item(url, que, url_manager):
         queue_item = QueueItem(url, 0)
-        url_model = Utils.get_or_create_url_model(url)
-        url_model.parse_iteration = site.parse_iteration
-        url_model.save()
+        url_manager.add(url)
         que.put(queue_item)
 
     def start(self, start_url):
         domain = Utils.extract_domain(start_url)
         site = Utils.get_or_create_site_model(domain)
-        site.parse_iteration += 1
-        site.save()
 
-        words_counter = Counter()
-        que = queue.Queue(maxsize=self.QUEUE_MAX_SIZE)
-        worker_threads = self._build_worker_pool(que, words_counter, site, self.WORKER_POOL_SIZE)
+        que = queue.Queue()
+        url_manager = UrlManager()
+        worker_threads = self._build_worker_pool(que, url_manager, site)
 
-        self._add_first_queue_item(start_url, que, site)
+        self._add_first_queue_item(start_url, que, url_manager)
         while (que.qsize() or self._active_job(worker_threads)) and not self._task_canceled:
             sleep(0.1)
 
@@ -55,13 +52,14 @@ class SiteLoader:
         for worker in worker_threads:
             worker.join()
 
-        self._add_to_site_words_frequency(site, words_counter)
+        site.graph_urls = url_manager.urls
+        site.graph_connections = url_manager.connections
         site.save()
 
-    def _build_worker_pool(self, que, words_counter, site, pool_size):
+    def _build_worker_pool(self, que, url_manager, site):
         workers = []
-        for _ in range(pool_size):
-            worker = UrlLoaderTask(que, words_counter, site, self._coord)
+        for _ in range(self.WORKER_POOL_SIZE):
+            worker = UrlLoaderTask(que, url_manager, site, self._coord)
             worker.start()
             workers.append(worker)
         return workers

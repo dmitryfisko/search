@@ -4,25 +4,22 @@ import time
 
 from bs4 import BeautifulSoup
 
-from site_parser.loader.utils import Tokenizer, Utils, QueueItem
+from site_parser.loader.utils import Utils, QueueItem
 
 
 class UrlLoaderTask(threading.Thread):
     REQUEST_TIMEOUT = 5
 
-    def __init__(self, que, words_counter, site, coord):
+    def __init__(self, que, url_manager, site, coord):
         threading.Thread.__init__(self)
         self._queue = que
         self._coord = coord
         self._site = site
-        self._site_words_counter = words_counter
+        self._url_manager = url_manager
         self._is_active_job = False
 
     def is_active_job(self):
         return self._is_active_job
-
-    def _add_words_to_site_words_counter(self, tokens):
-        self._site_words_counter.update({**self._site_words_counter, **tokens})
 
     def _is_url_need_parsing(self, depth):
         if depth > self._coord.depth_limit:
@@ -30,32 +27,20 @@ class UrlLoaderTask(threading.Thread):
         else:
             return True
 
-    def _process_new_links(self, url_model, soup, depth):
+    def _process_new_links(self, soup, depth):
+        if depth + 1 > self._coord.depth_limit:
+            return
+
         domain = self._site.domain
-        parse_iteration = self._site.parse_iteration
         hrefs = Utils.filter_links_from_domain(soup.find_all('a'), domain)
         for href in hrefs:
-            href_model = Utils.get_or_create_url_model(href)
-            url_model.urls_to.add(href_model)
-
-            with self._coord.lock:
-                if href_model.parse_iteration < parse_iteration:
-                    href_model.parse_iteration = parse_iteration
-                    href_model.save()
-                    queue_url = QueueItem(href, depth=depth + 1)
-                    self._queue.put(queue_url)
-
-    def _process_tokens(self, tokens, url_model):
-        self._add_words_to_site_words_counter(tokens)
-        url_model.clear_dict()
-        url_model.set_words_frequency(tokens)
-
-        for token in tokens.keys():
-            word_model = Utils.get_or_create_word_model(token)
-            word_model.urls.add(url_model)
+            if href not in self._url_manager:
+                self._url_manager.add(href)
+                queue_url = QueueItem(href, depth=depth + 1)
+                self._queue.put(queue_url)
 
     def run(self):
-        tokenizer = Tokenizer()
+        logger = logging.getLogger('site_parser')
 
         while True:
             queue_item = self._queue.get()
@@ -64,28 +49,25 @@ class UrlLoaderTask(threading.Thread):
                 self._is_active_job = False
                 break
 
-            url, depth = queue_item.url, queue_item.depth
-            if not self._is_url_need_parsing(depth):
-                continue
-
             wait = self._coord.next_wait_time()
             while wait != 0:
                 time.sleep(wait)
                 wait = self._coord.next_wait_time()
 
-            response = Utils.send_request(url, self.REQUEST_TIMEOUT)
-            if response:
-                raw_html = response.read().decode('utf8')
+            url, depth = queue_item.url, queue_item.depth
+            logger.info('url parsing: %s' % url)
+
+            raw_html = Utils.download_url(url, self.REQUEST_TIMEOUT)
+            if raw_html:
                 soup = BeautifulSoup(raw_html, 'lxml')
-                text = Utils.clean_text(soup)
-                tokens = tokenizer.tokenize(text)
+                self._process_new_links(soup, depth)
 
-                url_model = Utils.get_or_create_url_model(url)
-                self._process_new_links(url_model, soup, depth)
-                self._process_tokens(tokens, url_model)
-                url_model.text = text
-                url_model.save()
+                page_model = Utils.get_or_create_page_model(url)
+                page_model.text = Utils.clean_text(soup)
+                page_model.title = soup.title.string
+                page_model.save()
 
+            logger.info('url parsed: %s' % url)
             self._is_active_job = False
 
         logging.info('PhotoTask thread close')

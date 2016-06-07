@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'site_parser',
     'djcelery',
+    'django_hstore',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -119,6 +120,40 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'handlers': {
+        'logfile': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': 'logs/site_parser.log',
+            'formatter': 'verbose',
+            'maxBytes': 1024 * 1024 * 5,  # 5 mb
+        },
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+    },
+    'loggers': {
+        'site_parser': {
+            'handlers': ['logfile'],
+            'level': 'DEBUG',
+        },
+    }
+}
 
 
 # Internationalization

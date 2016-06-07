@@ -17,7 +17,7 @@ def start_parser(url, depth):
     if check_url(url):
         params = {}
         depth = convert_to_int(depth)
-        if depth:
+        if isinstance(depth, int):
             params['depth'] = depth
 
         coord = Coordinator(**params)
