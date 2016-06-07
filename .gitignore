@@ -1,6 +1,8 @@
 .DS_Store
-*.pyc
-__pycache__
+.vscode
 .idea/
+__pycache__
 search/.env
+logs/site_parser.log
+
 
