@@ -40,7 +40,7 @@ class SiteLoader:
         site = Utils.get_or_create_site_model(domain)
 
         que = queue.Queue()
-        url_manager = UrlManager()
+        url_manager = UrlManager(start_url)
         worker_threads = self._build_worker_pool(que, url_manager, site)
 
         self._add_first_queue_item(start_url, que, url_manager)

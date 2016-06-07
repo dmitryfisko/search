@@ -1,17 +1,14 @@
 import logging
-import string
+import time
 from _socket import timeout
-from collections import Counter
 from http.client import HTTPException
+from multiprocessing import RLock
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlparse
 from urllib.request import Request, urlopen
 
-import pymorphy2
-from multiprocessing import RLock
-
-import time
-from nltk import word_tokenize, WordNetLemmatizer, defaultdict
+from nltk import defaultdict
+from reppy.cache import RobotsCache
 
 from site_parser.models import Site, Page
 
@@ -47,14 +44,28 @@ class Coordinator:
 
 
 class UrlManager:
-    def __init__(self):
+    USER_AGENT = 'SiteParser'
+
+    def __init__(self, robots_url=None):
+        if robots_url:
+            robots = RobotsCache()
+            self._rules = robots.fetch(robots_url)
+            self.is_use_robots = True
+        else:
+            self.is_use_robots = False
+
         self.counter = 0
         self.urls = dict()
         self.connections = defaultdict(list)
         self._lock = RLock()
 
     def __contains__(self, url):
-        return url in self.urls
+        url_was = url in self.urls
+        if self.is_use_robots:
+            url_allowed = self._rules.allowed(url, self.USER_AGENT)
+            return url_was or not url_allowed
+        else:
+            return url_was
 
     def add(self, url):
         ind = self.urls.get(url)
