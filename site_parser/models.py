@@ -3,7 +3,6 @@ from django.db import models
 
 from site_parser.model_dict import Dictionary
 
-
 class Url(Dictionary):
     path = models.CharField(max_length=40, primary_key=True)
     urls_to = models.ManyToManyField('self')

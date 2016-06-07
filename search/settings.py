@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'search_engine',
     'site_parser',
     'djcelery',
+    'urls_config',
     'rest_framework'
 ]
 
@@ -96,11 +97,11 @@ WSGI_APPLICATION = 'search.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'search_engine',
+        'NAME': 'search',
         'USER': 'search_engine_user',
         'PASSWORD': 'password',
         'HOST': 'localhost',
-        'PORT': '',
+        'PORT': '5432',
     }
 }
 

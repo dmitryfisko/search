@@ -1,0 +1,11 @@
+<h1>Urls:</h1>
+<ul>
+    {% for url in object_list %}
+    <li>{{ url.path }}  :
+    <a href="{% url "url_edit" url.id %}">{{ url.title }}</a>
+    <a href="{% url "url_delete" url.id %}">delete</a>
+    </li>
+    {% endfor %}
+</ul>
+
+<a href="{% url "url_new" %}">New</a>
