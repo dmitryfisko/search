@@ -8,7 +8,9 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
+from search_api.utils import Snippet
 from site_parser.models import Page
+from site_parser.utils import convert_to_int
 
 
 class SearchReceiveView(View):
@@ -18,6 +20,9 @@ class SearchReceiveView(View):
     def get(request):
         query = request.GET.get('q', None)
         start = request.GET.get('start', 0)
+        start = convert_to_int(start)
+        if start is None:
+            start = 0
 
         if query:
             return SearchReceiveView.generate_response(query, start, request)
@@ -28,10 +33,19 @@ class SearchReceiveView(View):
     def generate_response(query, start, request):
         limit = SearchReceiveView.PAGE_LIMIT
         results = Page.search_manager.search(query)[start:start+limit]
-        response = render_to_response('search_api.html',
-                                      {'results': results},
-                                      context_instance=RequestContext(request))
-        return response
+
+        snippet = Snippet(query)
+        response = {'response': []}
+        for res in results:
+            item = {'title': res.title,
+                    'url': res.url,
+                    'snippet': snippet.make_snippet(res.text)}
+            response['response'].append(item)
+
+        # response = render_to_response('search_api.html',
+        #                               {'results': results},
+        #                               context_instance=RequestContext(request))
+        return JsonResponse(response)
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
