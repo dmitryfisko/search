@@ -3,12 +3,14 @@ from django.views.generic import TemplateView, ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.core.urlresolvers import reverse_lazy
 from django.db import models
-from urls_manage.models import Url
+# from urls_manage.models import Url
 from django.shortcuts import render
 
 class UrlList(ListView):
+    pass
     # import pdb; pdb.set_trace()
-    model = Url
+    # model = Url
+
 
 class UrlCreate(TemplateView):
     def get(self, request):
@@ -32,11 +34,13 @@ class UrlCreate(TemplateView):
         return render(request, 'urls_manage/added_to_index.html', context)
 
 class UrlUpdate(UpdateView):
+    pass
     # import pdb; pdb.set_trace()
-    model = Url
-    success_url = reverse_lazy('url_list')
-    fields = ['path', 'title']
+    # model = Url
+    # success_url = reverse_lazy('url_list')
+    # fields = ['path', 'title']
 
 class UrlDelete(DeleteView):
-    model = Url
-    success_url = reverse_lazy('url_list')
+    pass
+    # model = Url
+    # success_url = reverse_lazy('url_list')

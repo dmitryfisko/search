@@ -52,11 +52,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'frontend',
+    # 'frontend',
     'site_parser',
     'search_api',
     'djcelery',
-    'urls_manage',
+    # 'urls_manage',
     'rest_framework',
     'django_hstore',
 ]
