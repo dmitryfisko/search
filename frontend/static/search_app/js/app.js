@@ -1,6 +1,6 @@
 var app = angular.module('app', ['ui.router']);
 
-app.config(function ($stateProvider, $urlRouterProvider) {
+app.config(function ($stateProvider, $urlRouterProvider, $httpProvider) {
     // For any unmatched url, send to /route1
     $urlRouterProvider.otherwise("/");
     $stateProvider
@@ -14,6 +14,8 @@ app.config(function ($stateProvider, $urlRouterProvider) {
         templateUrl: "/static/search_app/html/results.html",
         controller: 'SearchResultsController'
     });
+    $httpProvider.defaults.xsrfCookieName = 'csrftoken';
+    $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
 });
 
 app.service('searchResultsService', SearchResultsService);
