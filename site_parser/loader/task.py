@@ -4,13 +4,14 @@ import time
 
 from bs4 import BeautifulSoup
 from langdetect import detect
+from preferences import preferences
 
 from site_parser.loader.urlnorm import UrlNorm
 from site_parser.loader.utils import Utils, QueueItem
 
 
 class UrlLoaderTask(threading.Thread):
-    REQUEST_TIMEOUT = 5
+    REQUEST_TIMEOUT = preferences.ParserPreferences.request_timeout
 
     def __init__(self, que, url_manager, site, coord):
         threading.Thread.__init__(self)

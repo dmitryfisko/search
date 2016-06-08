@@ -8,6 +8,7 @@ from preferences.models import Preferences
 class ParserPreferences(Preferences):
     __module__ = 'preferences.models'
     pool_size = models.IntegerField(default=20)
+    request_timeout = models.FloatField(default=5)
     default_requests_interval = models.FloatField(default=0.5)
 
     def __str__(self):

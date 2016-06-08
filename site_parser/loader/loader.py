@@ -1,14 +1,14 @@
 import queue
-from collections import Counter
 from time import sleep
+
+from preferences import preferences
 
 from site_parser.loader.task import UrlLoaderTask
 from site_parser.loader.utils import QueueItem, Utils, UNLIMITED_DEPTH, UrlManager
 
 
 class SiteLoader:
-    # QUEUE_MAX_SIZE = 100
-    WORKER_POOL_SIZE = 20
+    WORKER_POOL_SIZE = preferences.ParserPreferences.default_requests_interval
 
     def __init__(self, coordinator):
         self._coord = coordinator
