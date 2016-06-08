@@ -3,7 +3,7 @@ from django.views.generic import TemplateView, ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.core.urlresolvers import reverse_lazy
 from django.db import models
-from urls_config.models import Url
+from urls_manage.models import Url
 from django.shortcuts import render
 
 class UrlList(ListView):
@@ -12,7 +12,7 @@ class UrlList(ListView):
 
 class UrlCreate(TemplateView):
     def get(self, request):
-        return render(request, 'urls_config/url_new.html')
+        return render(request, 'urls_manage/url_new.html')
 
     def post(self, request):
         # Send request to site parser
@@ -29,7 +29,7 @@ class UrlCreate(TemplateView):
             'text': text
         }
 
-        return render(request, 'urls_config/added_to_index.html', context)
+        return render(request, 'urls_manage/added_to_index.html', context)
 
 class UrlUpdate(UpdateView):
     # import pdb; pdb.set_trace()

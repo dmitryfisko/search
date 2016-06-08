@@ -19,12 +19,12 @@ from django.contrib import admin
 from search_api.views import SearchReceiveView
 
 urlpatterns = [
-    # url(r'^default_admin/', admin.site.urls),
-    # url(r'^admin/', include('urls_config.urls')),
+    url(r'^default_admin/', admin.site.urls),
+    url(r'^admin/', include('urls_manage.urls')),
     # url(r'^urls/', include('site_parser.urls', namespace='site_parser')),
     # url(r'^search', include('search_engine.urls')),
-    # url(r'^', include('search_app.urls'))
-    url(r'^admin/', admin.site.urls),
+    url(r'^', include('frontend.urls')),
+    # url(r'^admin/', admin.site.urls),
     url(r'^url/', include('site_parser.urls', namespace='site_parser')),
     url(r'^search', SearchReceiveView.as_view(), name='search')
 ]

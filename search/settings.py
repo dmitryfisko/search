@@ -52,12 +52,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'search_app',
-    'search_engine',
+    'frontend',
     'site_parser',
     'search_api',
     'djcelery',
-    'urls_config',
+    'urls_manage',
     'rest_framework',
     'django_hstore',
 ]
@@ -181,7 +180,7 @@ USE_TZ = True
 STATIC_URL='/static/'
 STATICFILES_DIRS = [
     '/static/',
-    'search_app/static/',
+    'frontend/static/',
     'search_engine/static/'
 ]
 

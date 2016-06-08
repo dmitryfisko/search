@@ -13,12 +13,13 @@ app.controller('SearchFieldController', function($http, $window, $state,
     }
 
     this.search = function() {
-        var data ={
-            searchString: self.searchString
+        var data = {
+            q: self.searchString,
+            start: 0
         };
-        // debugger;
+        debugger;
 
-        $http.post('/search', data, null)
+        $http.get('/search/', data, null)
         .success(function(response) {
             searchResultsService.initResults(response);
             $state.go('results');
