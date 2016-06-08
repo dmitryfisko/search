@@ -45,8 +45,6 @@ CELERY_RESULT_SERIALIZER = 'json'
 
 # Application definition
 
-SITE_ID = 1
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -55,10 +53,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    # 'frontend',
     'site_parser',
     'search_api',
     'djcelery',
-    'preferences',
+    # 'urls_manage',
     'rest_framework',
     'django_hstore',
 ]
@@ -189,4 +188,4 @@ STATICFILES_DIRS = [
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 
-PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
+SITE_ID=1
