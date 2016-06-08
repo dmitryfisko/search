@@ -6,12 +6,12 @@ app.config(function ($stateProvider, $urlRouterProvider, $httpProvider) {
     $stateProvider
     .state('index', {
         url: "/",
-        templateUrl: "/static/search_app/html/index.html",
+        templateUrl: "/static/frontend/html/index.html",
         controller: 'SearchFieldController'
     })
     .state('results', {
         url: "/results",
-        templateUrl: "/static/search_app/html/results.html",
+        templateUrl: "/static/frontend/html/results.html",
         controller: 'SearchResultsController'
     });
     $httpProvider.defaults.xsrfCookieName = 'csrftoken';
