@@ -1,23 +1,10 @@
-app.controller('SearchFieldController', function($http, $window, $state,
-    searchResultsService) {
+app.controller('SearchFieldController', function($http, $window, $state, searchService) {
     // debugger
     var self = this;
-    var searchString = '';
+    this.searchString = '';
     this.search = function() {
-        var data = {
-            q: self.searchString,
-            start: 0
-        };
-
-        $http.get('/search?q=' + self.searchString + '&' + 'start=0').success(function(response) {
-            console.log('zbs')
-                searchResultsService.initResults(response['response']['results']);
-                $state.go('results');
-            }
-        ).error(function(response) {
-            console.log('vse huevo')
-        });
-
+        searchService.initService(self.searchString);
+        $state.go('results');
     }
 
     var searchResults = [];

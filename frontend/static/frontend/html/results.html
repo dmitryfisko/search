@@ -1,9 +1,12 @@
 <div ng-controller="SearchResultsController as resultsCtrl">
-  <h1>Look what we've found for you:</h1>
-  <div class="thumbnail" ng-repeat="result in resultsCtrl.pageResults">
+  <h1 ng-if="resultsCtrl.loadingState == true">Wait for a little...</h1>
+  <h1 ng-if="resultsCtrl.pager.pages.length">Look what we've found for you:</h1>
+  <h1 ng-if="!resultsCtrl.pager.pages.length &&
+             resultsCtrl.loadingState == false">Nothing found :(</h1>
+  <div class="thumbnail" ng-repeat="result in resultsCtrl.results">
     <div class="caption">
       <div class="result-title">
-        <h4><a href="{{ result.link }}">{{ result.title }}</a></h4>
+        <h4><a href="{{ result.url }}">{{ result.title }}</a></h4>
       </div>
       <div class="result-snippe">
         <p>{{ result.snippet }}</p>

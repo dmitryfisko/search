@@ -18,22 +18,48 @@ app.config(function ($stateProvider, $urlRouterProvider, $httpProvider) {
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
 });
 
-app.service('searchResultsService', SearchResultsService);
+// app.service('searchResultsService', SearchResultsService);
 app.service('pagerService', PagerService);
+app.service('searchService', SearchService);
 
-function SearchResultsService() {
-    var results = [];
-
-    var getResults = function() {
-        return results;
-    };
-
-    var initResults = function(data) {
-        results = data;
-    };
-
-    return {
-        getResults: getResults,
-        initResults: initResults
-    };
-}
+// function SearchResultsService() {
+//     var results = [];
+//     var resultsCount = 0;
+//     var pageLimit;
+//     var query;
+//
+//     var initService = function(q) {
+//         query = q;
+//     }
+//
+//     var getResults = function() {
+//         return results;
+//     };
+//
+//     var getCount = function() {
+//         return resultsCount;
+//     }
+//
+//     var getPageLimit = function() {
+//         return pageLimit;
+//     }
+//
+//     var getQuery = function() {
+//         return query;
+//     }
+//
+//     var initResults = function(data) {
+//         results = data['results'];
+//         resultsCount = data['count'];
+//         pageLimit = data['limit'];
+//     };
+//
+//     return {
+//         getResults: getResults,
+//         getCount: getCount,
+//         getPageLimit: getPageLimit,
+//         getQuery: getQuery,
+//         initResults: initResults,
+//         initService: initService
+//     };
+// }

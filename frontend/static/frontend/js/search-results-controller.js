@@ -1,18 +1,19 @@
-app.controller('SearchResultsController', function($state, searchResultsService) {
+app.controller('SearchResultsController', function($http, searchService) {
     var self = this;
 
-    this.results = searchResultsService.getResults();
+    this.results = [];
     this.pager = {};
     this.setPage = setPage;
+    this.loadingState = false;
 
     initController();
 
     function initController() {
         // initialize to page 1
         self.setPage(1);
-        if (searchResultsService.getResults().length === 0) {
-            $state.go('index');
-        }
+        // if (searchResultsService.getCount() === 0) {
+        //     $state.go('index');
+        // }
     }
 
     function setPage(page) {
@@ -20,10 +21,15 @@ app.controller('SearchResultsController', function($state, searchResultsService)
             return;
         }
 
-        // get pager object from service
-        self.pager = PagerService().getPager(self.results.length, page);
+        self.loadingState = true;
+        response = searchService.getResults(page - 1).then(function(data) {
+            response = data['response'];
+            console.log(response);
+            self.results = response['results'];
+            self.pager = PagerService().getPager(response['count'],
+                page, response['limit']);
+            self.loadingState = false;
 
-        // get current page of items
-        self.pageResults = self.results.slice(self.pager.startIndex, self.pager.endIndex);
+        });
     }
 });
