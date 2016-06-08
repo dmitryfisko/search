@@ -1,9 +1,6 @@
 from django.http import JsonResponse
-from django.shortcuts import render, render_to_response
 
 # Create your views here.
-from django.template import RequestContext
-from django.template.loader import render_to_string
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
@@ -11,6 +8,8 @@ from django.views.generic import View
 from search_api.utils import Snippet
 from site_parser.models import Page
 from site_parser.utils import convert_to_int
+
+from site_parser.tasks import start_parser
 
 
 class SearchReceiveView(View):
@@ -54,3 +53,20 @@ class SearchReceiveView(View):
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
         return super(SearchReceiveView, self).dispatch(request, *args, **kwargs)
+
+
+class AddUrlsReceiveView(View):
+    @staticmethod
+    def get(request):
+        start_url = request.GET.get('url', None)
+        depth = request.GET.get('depth', None)
+
+        if start_url:
+            start_parser.delay(start_url, depth)
+            return JsonResponse({}, status=200)
+        else:
+            return JsonResponse({}, status=400)
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super(AddUrlsReceiveView, self).dispatch(request, *args, **kwargs)

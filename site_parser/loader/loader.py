@@ -8,7 +8,7 @@ from site_parser.loader.utils import QueueItem, Utils, UNLIMITED_DEPTH, UrlManag
 
 class SiteLoader:
     # QUEUE_MAX_SIZE = 100
-    WORKER_POOL_SIZE = 50
+    WORKER_POOL_SIZE = 10
 
     def __init__(self, coordinator):
         self._coord = coordinator
