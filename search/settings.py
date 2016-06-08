@@ -186,3 +186,5 @@ STATICFILES_DIRS = [
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
+
+PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
