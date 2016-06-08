@@ -44,6 +44,7 @@ CELERY_RESULT_SERIALIZER = 'json'
 # }
 
 # Application definition
+SITE_ID = 1
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -53,7 +54,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
-    # 'frontend',
+    'preferences',
+    'frontend',
     'site_parser',
     'search_api',
     'djcelery',

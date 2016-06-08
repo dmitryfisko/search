@@ -8,7 +8,8 @@ from site_parser.loader.utils import QueueItem, Utils, UNLIMITED_DEPTH, UrlManag
 
 
 class SiteLoader:
-    WORKER_POOL_SIZE = preferences.ParserPreferences.default_requests_interval
+    # WORKER_POOL_SIZE = preferences.ParserPreferences.default_requests_interval
+    WORKER_POOL_SIZE = 20
 
     def __init__(self, coordinator):
         self._coord = coordinator

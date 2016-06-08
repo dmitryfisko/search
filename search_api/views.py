@@ -18,7 +18,8 @@ import json
 
 
 class SearchReceiveView(View):
-    PAGE_LIMIT = preferences.APIPreferences.search_page_limit
+    # PAGE_LIMIT = preferences.APIPreferences.search_page_limit
+    PAGE_LIMIT = 10
 
     @staticmethod
     def get(request):
@@ -76,7 +77,8 @@ class SearchReceiveView(View):
 
 
 class AddUrlsReceiveView(View):
-    UPLOAD_MAX_SIZE = preferences.APIPreferences.urls_upload_size_limit
+    # UPLOAD_MAX_SIZE = preferences.APIPreferences.urls_upload_size_limit
+    UPLOAD_MAX_SIZE =1024*20
 
     @staticmethod
     def get(request):
@@ -90,7 +92,6 @@ class AddUrlsReceiveView(View):
             return HttpResponse(status=400)
 
     def post(self, request):
-        import pdb; pdb.set_trace()
         urls, depth = None, None
         urls_file = request.FILES.get('urls_file')
         if urls_file:

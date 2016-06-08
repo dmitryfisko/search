@@ -8,8 +8,5 @@ def index(request):
 def results(request):
     return render(request, 'frontend/results.html')
 
-def draw_sitemap(request):
-    return render(request, 'frontend/sitemap.html')
-
 def sitemap(request):
-    return HttpResponse('hello')
+    return render(request, 'frontend/sitemap.html')

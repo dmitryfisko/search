@@ -14,16 +14,17 @@
 <div class="" ng-controller="AddUrlsController as urlCtrl">
   <input-url>
     <h2>Input URLs:</h2>
-    <div class="form-group">
-      <textarea class="url_area form-control" rows="1" cols="40"
-                ng-model="urlCtrl.text"></textarea>
-
+    <!-- <div class="form-group"> -->
+      <div class="row form form-inline form-group">
+        <textarea class="url_area form-control form-inline" rows="1" cols="40"
+        ng-model="urlCtrl.text"></textarea>
+        <input type="number" class="form-control form-inline" ng-model="urlCtrl.depth">
+      </div>
       <p class="awesome-button">
         <button class="btn btn-success" ng-click="urlCtrl.addUrls()">Add to index!</button>
       </p>
-    </div>
+    <!-- </div> -->
   </input-url>
-
 </div>
 
 <div class="" ng-controller="FileUrlsController as fileCtrl">
@@ -35,8 +36,6 @@
       </span>
     </label>
     <input type="text" class="form-control" readonly>
-
-
   </div>
   <p class="awesome-button">
     <button class="btn btn-success" ng-click="fileCtrl.uploadFile()">Upload to index!</button>

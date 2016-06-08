@@ -28,7 +28,8 @@ class QueueItem:
 
 class Coordinator:
     def __init__(self, depth=UNLIMITED_DEPTH,
-                 requests_delay=preferences.ParserPreferences.default_requests_interval):
+                #  requests_delay=preferences.ParserPreferences.default_requests_interval):
+                 requests_delay=0.5):
         self._prev_time = 0
         self._requests_delay = requests_delay
         self.lock = RLock()
