@@ -10,6 +10,7 @@ from urllib.request import Request, urlopen
 from nltk import defaultdict
 from reppy.cache import RobotsCache
 
+from site_parser.loader.urlnorm import UrlNorm
 from site_parser.models import Site, Page
 
 UNLIMITED_DEPTH = 10000
@@ -54,12 +55,14 @@ class UrlManager:
         else:
             self.is_use_robots = False
 
+        self._url_norm = UrlNorm()
         self.counter = 0
         self.urls = dict()
-        self.connections = defaultdict(list)
+        self.connections = defaultdict(set)
         self._lock = RLock()
 
     def __contains__(self, url):
+        url = self._url_norm.canonize(url)
         url_was = url in self.urls
         if self.is_use_robots:
             url_allowed = self._rules.allowed(url, self.USER_AGENT)
@@ -77,13 +80,13 @@ class UrlManager:
         return ind
 
     def connect_urls(self, url1, url2):
-        if url1 > url2:
-            url1, url2 = url2, url1
+        url1 = self._url_norm.canonize(url1)
+        url2 = self._url_norm.canonize(url2)
 
         ind1 = self.add(url1)
         ind2 = self.add(url2)
 
-        self.connections[ind1].append(ind2)
+        self.connections[ind1].add(ind2)
 
 
 class Utils:
@@ -144,8 +147,12 @@ class Utils:
     @staticmethod
     def filter_links_from_domain(links, domain):
         filtered_hrefs = []
+        all_hrefs = []
         for link in links:
             url = link.get('href')
+            if not url:
+                continue
+            all_hrefs.append(url)
             if Utils.extract_domain(url) == domain:
                 filtered_hrefs.append(url)
-        return filtered_hrefs
+        return filtered_hrefs, all_hrefs

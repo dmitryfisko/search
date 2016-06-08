@@ -8,7 +8,7 @@ from site_parser.loader.utils import QueueItem, Utils, UNLIMITED_DEPTH, UrlManag
 
 class SiteLoader:
     # QUEUE_MAX_SIZE = 100
-    WORKER_POOL_SIZE = 50
+    WORKER_POOL_SIZE = 10
 
     def __init__(self, coordinator):
         self._coord = coordinator
@@ -53,7 +53,8 @@ class SiteLoader:
             worker.join()
 
         site.graph_urls = url_manager.urls
-        site.graph_connections = url_manager.connections
+        serialized_connections = {str(k): list(v) for k, v in url_manager.connections.items()}
+        site.graph_connections = serialized_connections
         site.save()
 
     def _build_worker_pool(self, que, url_manager, site):
