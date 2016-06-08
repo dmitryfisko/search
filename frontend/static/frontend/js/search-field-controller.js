@@ -11,7 +11,7 @@ app.controller('SearchFieldController', function($http, $window, $state,
 
         $http.get('/search?q=' + self.searchString + '&' + 'start=0').success(function(response) {
             console.log('zbs')
-                searchResultsService.initResults(response['response']);
+                searchResultsService.initResults(response['response']['results']);
                 $state.go('results');
             }
         ).error(function(response) {
