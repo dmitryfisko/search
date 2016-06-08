@@ -1,6 +1,10 @@
 var app = angular.module('app', ['ui.router']);
 
-app.config(function ($stateProvider, $urlRouterProvider, $httpProvider) {
+// app.config(["$locationProvider", function() {
+//   $locationProvider.html5Mode(true);
+// }]);
+
+app.config(function ($stateProvider, $urlRouterProvider, $httpProvider, $locationProvider) {
     // For any unmatched url, send to /route1
     $urlRouterProvider.otherwise("/");
     $stateProvider
@@ -13,27 +17,16 @@ app.config(function ($stateProvider, $urlRouterProvider, $httpProvider) {
         url: "/results",
         templateUrl: "/static/frontend/html/results.html",
         controller: 'SearchResultsController'
+    })
+    .state('add_urls', {
+        url: "/add_urls",
+        templateUrl: "/static/frontend/html/add_urls.html",
+        controller: 'AddUrlsController'
     });
     $httpProvider.defaults.xsrfCookieName = 'csrftoken';
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
+    $locationProvider.html5Mode(true);
 });
 
-app.service('searchResultsService', SearchResultsService);
 app.service('pagerService', PagerService);
-
-function SearchResultsService() {
-    var results = [];
-
-    var getResults = function() {
-        return results;
-    };
-
-    var initResults = function(data) {
-        results = data;
-    };
-
-    return {
-        getResults: getResults,
-        initResults: initResults
-    };
-}
+app.service('searchService', SearchService);

@@ -135,7 +135,7 @@ body {
 @media (min-width: 768px) {
     /* Pull out the header and footer */
     .masthead {
-        position: fixed;
+        position: absolute;
         top: 0;
     }
     .mastfoot {
@@ -163,7 +163,7 @@ body {
 }
 
 /* My css */
-.search-field {
+.awesome-button {
     margin: 20px;
 }
 
@@ -203,6 +203,14 @@ body {
 
 .pagination a {
     cursor: pointer;
+}
+
+.url_area {
+    resize: none;
+}
+
+.search-results-panel {
+    margin-top: 80px;
 }
 
 /*

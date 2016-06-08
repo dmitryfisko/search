@@ -109,13 +109,16 @@ class ApiUtils:
 
     @staticmethod
     def parse_urls_file(file):
-        content = json.load(file)
+        try:
+            content = json.load(file)
+        except:
+            return None
         return ApiUtils.parse_urls_data(content)
 
     @staticmethod
     def parse_urls_data(content):
-        depth = content.get['depth']
-        urls = content.get['urls']
-        if urls and all(isinstance(url, str) for url in urls):
+        depth = content.get('depth')
+        urls = content.get('urls')
+        if urls and not all(isinstance(url, str) for url in urls):
             urls = None
         return depth, urls

@@ -22,15 +22,21 @@
     <script src="{% static "frontend/js/vendor/underscore-min.js" %}"></script>
     <!-- {% block extra_js %}{% endblock %} -->
     <script src="{% static "frontend/js/pager-service.js" %}"></script>
+    <script src="{% static "frontend/js/search-service.js" %}"></script>
     <script src="{% static "frontend/js/app.js" %}"></script>
     <script src="{% static "frontend/js/search-field-controller.js" %}"></script>
     <script src="{% static "frontend/js/search-results-controller.js" %}"></script>
+    <script src="{% static "frontend/js/file-urls-controller.js" %}"></script>
+    <script src="{% static "frontend/js/file-upload.js" %}"></script>
+    <script src="{% static "frontend/js/input-url-directive.js" %}"></script>
+    <script src="{% static "frontend/js/add-urls-controller.js" %}"></script>
   </head>
 
   <body>
     <div class="site-wrapper">
       <div class="site-wrapper-inner">
         <div class="cover-container">
+           <base href="/">
           <div ui-view></div>
         </div>
       </div>

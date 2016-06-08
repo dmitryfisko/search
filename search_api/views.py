@@ -14,6 +14,7 @@ from site_parser.models import Page, WebSite
 from site_parser.utils import convert_to_int
 
 from site_parser.tasks import start_parser
+import json
 
 
 class SearchReceiveView(View):
@@ -90,14 +91,18 @@ class AddUrlsReceiveView(View):
             return HttpResponse(status=400)
 
     def post(self, request):
+        import pdb; pdb.set_trace()
         urls, depth = None, None
-        urls_file = request.FILES['urls_file']
-        if urls_file and urls_file.size <= self.UPLOAD_MAX_SIZE:
-            depth, urls = ApiUtils.parse_urls_file(urls_file)
+        urls_file = request.FILES.get('urls_file')
+        if urls_file:
+            json_data = urls_file.read()
+        else:
+            json_data = request.body
 
-        urls_data = request.POST.get('data')
-        if urls_data and len(urls_data) <= self.UPLOAD_MAX_SIZE:
-            depth, urls = ApiUtils.parse_urls_file(urls_data)
+        urls_data = json.loads(json_data.decode('utf8'))
+
+        if urls_data and len(json_data) <= self.UPLOAD_MAX_SIZE:
+            depth, urls = ApiUtils.parse_urls_data(urls_data)
 
         if not urls:
             return HttpResponse(status=400)

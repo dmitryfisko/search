@@ -1,0 +1,44 @@
+<div class="masthead clearfix">
+  <div class="inner">
+    <a href="/">
+      <h3 class="masthead-brand">&lt;/search&gt;</h3>
+    </a>
+    <nav>
+      <ul class="nav masthead-nav">
+        <li><a ng-href="/">Go to search</a></li>
+      </ul>
+    </nav>
+  </div>
+</div>
+
+<div class="" ng-controller="AddUrlsController as urlCtrl">
+  <input-url>
+    <h2>Input URLs:</h2>
+    <div class="form-group">
+      <textarea class="url_area form-control" rows="1" cols="40"
+                ng-model="urlCtrl.text"></textarea>
+
+      <p class="awesome-button">
+        <button class="btn btn-success" ng-click="urlCtrl.addUrls()">Add to index!</button>
+      </p>
+    </div>
+  </input-url>
+
+</div>
+
+<div class="" ng-controller="FileUrlsController as fileCtrl">
+  <div class="input-group">
+    <label class="input-group-btn">
+      <span class="btn btn-primary">
+        Browse&hellip;
+        <input type="file" style="display: none;" file-model='fileCtrl.urlsFile'>
+      </span>
+    </label>
+    <input type="text" class="form-control" readonly>
+
+
+  </div>
+  <p class="awesome-button">
+    <button class="btn btn-success" ng-click="fileCtrl.uploadFile()">Upload to index!</button>
+  </p>
+</div>
