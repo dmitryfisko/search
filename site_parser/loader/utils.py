@@ -8,10 +8,11 @@ from urllib.parse import urlparse
 from urllib.request import Request, urlopen
 
 from nltk import defaultdict
+from preferences import preferences
 from reppy.cache import RobotsCache
 
 from site_parser.loader.urlnorm import UrlNorm
-from site_parser.models import Site, Page
+from site_parser.models import WebSite, Page
 
 UNLIMITED_DEPTH = 10000
 
@@ -26,7 +27,8 @@ class QueueItem:
 
 
 class Coordinator:
-    def __init__(self, depth=UNLIMITED_DEPTH, requests_delay=0.5):
+    def __init__(self, depth=UNLIMITED_DEPTH,
+                 requests_delay=preferences.ParserPreferences.default_requests_interval):
         self._prev_time = 0
         self._requests_delay = requests_delay
         self.lock = RLock()
@@ -107,12 +109,12 @@ class Utils:
 
     @staticmethod
     def get_or_create_site_model(domain):
-        site_exist = Site.objects.filter(domain=domain).exists()
+        site_exist = WebSite.objects.filter(domain=domain).exists()
         if not site_exist:
-            site = Site(domain=domain)
+            site = WebSite(domain=domain)
             site.save()
         else:
-            site = Site.objects.get(domain=domain)
+            site = WebSite.objects.get(domain=domain)
 
         return site
 

@@ -1,3 +1,7 @@
 from django.contrib import admin
 
-# Register your models here.
+from preferences.admin import PreferencesAdmin
+from search_api.models import APIPreferences
+
+
+admin.site.register(APIPreferences, PreferencesAdmin)
