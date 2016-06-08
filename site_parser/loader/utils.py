@@ -58,7 +58,7 @@ class UrlManager:
         self._url_norm = UrlNorm()
         self.counter = 0
         self.urls = dict()
-        self.connections = defaultdict(list)
+        self.connections = defaultdict(set)
         self._lock = RLock()
 
     def __contains__(self, url):
@@ -86,7 +86,7 @@ class UrlManager:
         ind1 = self.add(url1)
         ind2 = self.add(url2)
 
-        self.connections[ind1].append(ind2)
+        self.connections[ind1].add(ind2)
 
 
 class Utils:
@@ -150,6 +150,8 @@ class Utils:
         all_hrefs = []
         for link in links:
             url = link.get('href')
+            if not url:
+                continue
             all_hrefs.append(url)
             if Utils.extract_domain(url) == domain:
                 filtered_hrefs.append(url)

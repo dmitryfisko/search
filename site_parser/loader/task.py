@@ -4,6 +4,7 @@ import time
 
 from bs4 import BeautifulSoup
 
+from site_parser.loader.urlnorm import UrlNorm
 from site_parser.loader.utils import Utils, QueueItem
 
 
@@ -36,7 +37,10 @@ class UrlLoaderTask(threading.Thread):
             Utils.filter_links_from_domain(soup.find_all('a'), domain)
 
         for href in all_hrefs:
-            self._url_manager.connect_urls(url, href)
+            try:
+                self._url_manager.connect_urls(url, href)
+            except UrlNorm.InvalidUrl:
+                pass
         for href in url_domain_hrefs:
             if href not in self._url_manager:
                 self._url_manager.add(href)

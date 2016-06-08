@@ -61,7 +61,8 @@ class SearchReceiveView(View):
 class AddUrlsReceiveView(View):
     UPLOAD_FILE_MAX_SIZE = 1024 * 20
 
-    def get(self, request):
+    @staticmethod
+    def get(request):
         start_url = request.GET.get('url', None)
         depth = request.GET.get('depth', None)
 

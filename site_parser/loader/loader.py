@@ -53,7 +53,8 @@ class SiteLoader:
             worker.join()
 
         site.graph_urls = url_manager.urls
-        site.graph_connections = url_manager.connections
+        serialized_connections = {str(k): list(v) for k, v in url_manager.connections.items()}
+        site.graph_connections = serialized_connections
         site.save()
 
     def _build_worker_pool(self, que, url_manager, site):
