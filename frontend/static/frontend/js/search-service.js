@@ -18,8 +18,13 @@ function SearchService($q, $http) {
         return defer.promise;
     }
 
+    var getQuery = function() {
+        return query;
+    }
+
     return {
         initService: initService,
-        getResults: getResults
+        getResults: getResults,
+        getQuery: getQuery
     };
 }

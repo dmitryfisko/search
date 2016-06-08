@@ -1,10 +1,19 @@
-app.controller('SearchFieldController', function($http, $window, $state, searchService) {
+app.controller('SearchFieldController', function($http, $window, $state,
+    $stateParams, searchService) {
     // debugger
+
     var self = this;
-    this.searchString = '';
+    this.searchString = searchService.getQuery();
     this.search = function() {
+        if (self.searchString.length === 0) {
+            return;
+        }
         searchService.initService(self.searchString);
-        $state.go('results');
+        $state.transitionTo('results', $stateParams, {
+            reload: true,
+            inherit: false,
+            notify: true
+        });
     }
 
     var searchResults = [];

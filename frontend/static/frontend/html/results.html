@@ -1,35 +1,55 @@
-<div ng-controller="SearchResultsController as resultsCtrl">
-  <h1 ng-if="resultsCtrl.loadingState == true">Wait for a little...</h1>
-  <h1 ng-if="resultsCtrl.pager.pages.length">Look what we've found for you:</h1>
-  <h1 ng-if="!resultsCtrl.pager.pages.length &&
-             resultsCtrl.loadingState == false">Nothing found :(</h1>
-  <div class="thumbnail" ng-repeat="result in resultsCtrl.results">
-    <div class="caption">
-      <div class="result-title">
-        <h4><a href="{{ result.url }}">{{ result.title }}</a></h4>
+<div class="masthead clearfix navbar navbar-inversed">
+  <div class="inner">
+    <a href="/#/">
+      <h3 class="masthead-brand">&lt;/search&gt;</h3>
+    </a>
+    <nav class="masthead-nav">
+      <div class="inner cover" ng-controller="SearchFieldController as searchCtrl">
+        <div class="form-group form-inline" style="float: left">
+          <input type="text" class="form-inline form-control" ng-model="searchCtrl.searchString"
+                 ng-cloak ng-keypress="searchCtrl.keyPress($event)">
+          <button ng-disabled="searchCtrl.searchString.length === 0"
+                  class="btn btn-md btn-default" ng-click="searchCtrl.search()">Search!</button>
+        </div>
       </div>
-      <div class="result-snippe">
-        <p>{{ result.snippet }}</p>
+    </nav>
+  </div>
+</div>
+
+<div class="search-results-panel">
+  <div ng-controller="SearchResultsController as resultsCtrl">
+    <h1 ng-if="resultsCtrl.loadingState == true">Wait for a little...</h1>
+    <h1 ng-if="resultsCtrl.pager.pages.length">Look what we've found for you:</h1>
+    <h1 ng-if="!resultsCtrl.pager.pages.length &&
+               resultsCtrl.loadingState == false">Nothing found :(</h1>
+    <div class="thumbnail" ng-repeat="result in resultsCtrl.results">
+      <div class="caption">
+        <div class="result-title">
+          <h4><a href="{{ result.url }}">{{ result.title }}</a></h4>
+        </div>
+        <div class="result-snippe">
+          <p>{{ result.snippet }}</p>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- pager -->
-  <ul ng-if="resultsCtrl.pager.pages.length" class="pagination">
-    <li ng-class="{disabled:resultsCtrl.pager.currentPage === 1}">
-      <a ng-click="resultsCtrl.setPage(1)">First</a>
-    </li>
-    <li ng-class="{disabled:resultsCtrl.pager.currentPage === 1}">
-      <a ng-click="resultsCtrl.setPage(resultsCtrl.pager.currentPage - 1)">Previous</a>
-    </li>
-    <li ng-repeat="page in resultsCtrl.pager.pages" ng-class="{active:resultsCtrl.pager.currentPage === page}">
-      <a ng-click="resultsCtrl.setPage(page)">{{page}}</a>
-    </li>
-    <li ng-class="{disabled:resultsCtrl.pager.currentPage === resultsCtrl.pager.totalPages}">
-      <a ng-click="resultsCtrl.setPage(resultsCtrl.pager.currentPage + 1)">Next</a>
-    </li>
-    <li ng-class="{disabled:resultsCtrl.pager.currentPage === resultsCtrl.pager.totalPages}">
-      <a ng-click="resultsCtrl.setPage(resultsCtrl.pager.totalPages)">Last</a>
-    </li>
-  </ul>
+    <!-- pager -->
+    <ul ng-if="resultsCtrl.pager.pages.length" class="pagination">
+      <li ng-class="{disabled:resultsCtrl.pager.currentPage === 1}">
+        <a ng-click="resultsCtrl.setPage(1)">First</a>
+      </li>
+      <li ng-class="{disabled:resultsCtrl.pager.currentPage === 1}">
+        <a ng-click="resultsCtrl.setPage(resultsCtrl.pager.currentPage - 1)">Previous</a>
+      </li>
+      <li ng-repeat="page in resultsCtrl.pager.pages" ng-class="{active:resultsCtrl.pager.currentPage === page}">
+        <a ng-click="resultsCtrl.setPage(page)">{{page}}</a>
+      </li>
+      <li ng-class="{disabled:resultsCtrl.pager.currentPage === resultsCtrl.pager.totalPages}">
+        <a ng-click="resultsCtrl.setPage(resultsCtrl.pager.currentPage + 1)">Next</a>
+      </li>
+      <li ng-class="{disabled:resultsCtrl.pager.currentPage === resultsCtrl.pager.totalPages}">
+        <a ng-click="resultsCtrl.setPage(resultsCtrl.pager.totalPages)">Last</a>
+      </li>
+    </ul>
+  </div>
 </div>

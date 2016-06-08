@@ -135,7 +135,7 @@ body {
 @media (min-width: 768px) {
     /* Pull out the header and footer */
     .masthead {
-        position: fixed;
+        position: absolute;
         top: 0;
     }
     .mastfoot {
@@ -207,6 +207,10 @@ body {
 
 .url_area {
     resize: none;
+}
+
+.search-results-panel {
+    margin-top: 80px;
 }
 
 /*
