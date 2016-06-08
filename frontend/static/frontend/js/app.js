@@ -1,6 +1,10 @@
 var app = angular.module('app', ['ui.router']);
 
-app.config(function ($stateProvider, $urlRouterProvider, $httpProvider, $) {
+// app.config(["$locationProvider", function() {
+//   $locationProvider.html5Mode(true);
+// }]);
+
+app.config(function ($stateProvider, $urlRouterProvider, $httpProvider, $locationProvider) {
     // For any unmatched url, send to /route1
     $urlRouterProvider.otherwise("/");
     $stateProvider
@@ -21,7 +25,7 @@ app.config(function ($stateProvider, $urlRouterProvider, $httpProvider, $) {
     });
     $httpProvider.defaults.xsrfCookieName = 'csrftoken';
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
-    // $locationProvider.html5Mode(true);
+    $locationProvider.html5Mode(true);
 });
 
 app.service('pagerService', PagerService);
