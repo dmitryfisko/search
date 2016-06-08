@@ -11,7 +11,7 @@ from nltk import defaultdict
 from reppy.cache import RobotsCache
 
 from site_parser.loader.urlnorm import UrlNorm
-from site_parser.models import Site, Page
+from site_parser.models import WebSite, Page
 
 UNLIMITED_DEPTH = 10000
 
@@ -107,12 +107,12 @@ class Utils:
 
     @staticmethod
     def get_or_create_site_model(domain):
-        site_exist = Site.objects.filter(domain=domain).exists()
+        site_exist = WebSite.objects.filter(domain=domain).exists()
         if not site_exist:
-            site = Site(domain=domain)
+            site = WebSite(domain=domain)
             site.save()
         else:
-            site = Site.objects.get(domain=domain)
+            site = WebSite.objects.get(domain=domain)
 
         return site
 

@@ -7,16 +7,17 @@ from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
+from preferences import preferences
 
 from search_api.utils import Snippet, ApiUtils
-from site_parser.models import Page, Site
+from site_parser.models import Page, WebSite
 from site_parser.utils import convert_to_int
 
 from site_parser.tasks import start_parser
 
 
 class SearchReceiveView(View):
-    PAGE_LIMIT = 10
+    PAGE_LIMIT = preferences.ApiPreferences.search_page_limit
 
     @staticmethod
     def get(request):
@@ -40,9 +41,9 @@ class SearchReceiveView(View):
 
         query_domain = params.get('site')
         if query_domain:
-            site_filter = Site.objects.filter(domain=query_domain)
+            site_filter = WebSite.objects.filter(domain=query_domain)
             if site_filter.exists():
-                site_pages = Site.objects.get(domain=query_domain).pages.all()
+                site_pages = WebSite.objects.get(domain=query_domain).pages.all()
                 all_results &= site_pages
             else:
                 all_results = Page.objects.none()
@@ -75,7 +76,18 @@ class SearchReceiveView(View):
 
 
 class AddUrlsReceiveView(View):
-    UPLOAD_MAX_SIZE = 1024 * 20
+    UPLOAD_MAX_SIZE = preferences.ApiPreferences.urls_upload_size_limit
+
+    @staticmethod
+    def get(request):
+        start_url = request.GET.get('url', None)
+        depth = request.GET.get('depth', None)
+
+        if start_url:
+            start_parser.delay(start_url, depth)
+            return HttpResponse(status=200)
+        else:
+            return HttpResponse(status=400)
 
     def post(self, request):
         urls, depth = None, None
