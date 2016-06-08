@@ -20,7 +20,7 @@ def start_parser(url, depth):
         if isinstance(depth, int):
             params['depth'] = depth
 
-        coord = Coordinator(**params)
+        coord = Coordinator(**params, requests_delay=0.1)
         loader = SiteLoader(coord)
         loader.start(url)
 
