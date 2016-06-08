@@ -52,11 +52,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'frontend',
+    # 'frontend',
     'site_parser',
     'search_api',
     'djcelery',
-    'urls_manage',
+    # 'urls_manage',
     'rest_framework',
     'django_hstore',
 ]
@@ -78,7 +78,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [os.path.join(BASE_DIR, 'templates'),
-                 os.path.join(BASE_DIR, 'search_app/templates')]
+                 os.path.join(BASE_DIR, 'frontend/templates')]
         ,
         'APP_DIRS': True,
         'OPTIONS': {

@@ -18,6 +18,7 @@ class SearchReceiveView(View):
 
     @staticmethod
     def get(request):
+        # import pdb; pdb.set_trace()
         query = request.GET.get('q', None)
         start = request.GET.get('start', 0)
         start = convert_to_int(start)
