@@ -6,17 +6,22 @@ app.controller('AddUrlsController', function($http) {
 
     this.addUrls = function() {
         urls = self.text.split('\n');
-        debugger
         if (urls.length === 0 && urls[0] == "") {
             console.log('error');
             return;
         } else {
-            data = {
+            var data = {
                 depth: self.depth,
                 urls: urls
             }
 
-            $http.post('api/urls', data)
+            var config = {
+                headers : {
+                    'Content-Type': 'application/json'
+                }
+            }
+
+            $http.post('api/urls', data, config)
             .success(function(response) {
                 console.log(response);
             })
