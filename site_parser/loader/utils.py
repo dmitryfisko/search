@@ -8,11 +8,10 @@ from urllib.parse import urlparse
 from urllib.request import Request, urlopen
 
 from nltk import defaultdict
-from preferences import preferences
 from reppy.cache import RobotsCache
 
 from site_parser.loader.urlnorm import UrlNorm
-from site_parser.models import WebSite, Page
+from site_parser.models import WebSite, Page, settings
 
 UNLIMITED_DEPTH = 10000
 
@@ -27,11 +26,8 @@ class QueueItem:
 
 
 class Coordinator:
-    def __init__(self, depth=UNLIMITED_DEPTH,
-                #  requests_delay=preferences.ParserPreferences.default_requests_interval):
-                 requests_delay=0.5):
+    def __init__(self, depth=UNLIMITED_DEPTH):
         self._prev_time = 0
-        self._requests_delay = requests_delay
         self.lock = RLock()
         self.depth_limit = depth
 
@@ -40,11 +36,11 @@ class Coordinator:
             curr_time = time.time()
             passed_time = curr_time - self._prev_time
 
-            if passed_time >= self._requests_delay:
+            if passed_time >= settings.REQUEST_MIN_DELAY:
                 self._prev_time = curr_time
                 return 0
             else:
-                return self._requests_delay - passed_time
+                return settings.REQUEST_MIN_DELAY - passed_time
 
 
 class UrlManager:

@@ -2,17 +2,16 @@ from django_hstore import hstore
 from djorm_pgfulltext.models import SearchManager
 from djorm_pgfulltext.fields import VectorField
 from django.db import models
-from preferences.models import Preferences
+
+import dbsettings
 
 
-class ParserPreferences(Preferences):
-    __module__ = 'preferences.models'
-    pool_size = models.IntegerField(default=20)
-    request_timeout = models.FloatField(default=5)
-    default_requests_interval = models.FloatField(default=0.5)
+class ParserSettings(dbsettings.Group):
+    WORKER_POOL_SIZE = dbsettings.PositiveIntegerValue(default=20)
+    REQUEST_MAX_TIMEOUT = dbsettings.PositiveIntegerValue(default=5)
+    REQUEST_MIN_DELAY = dbsettings.FloatValue(default=0.5)
 
-    def __str__(self):
-        return __name__
+settings = ParserSettings('Parser Settings')
 
 
 class Page(models.Model):
@@ -44,6 +43,3 @@ class WebSite(models.Model):
 
     def __str__(self):
         return self.domain
-
-
-

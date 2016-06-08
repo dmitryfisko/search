@@ -32,18 +32,8 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 
-# CELERY_QUEUES = (
-#     Queue('site_parser', routing_key='site_parser'),
-# )
-#
-# CELERY_ROUTES = {
-#     'site_parser.tasks.test': {
-#         'queue': 'site_parser',
-#         'routing_key': 'site_parser.routing',
-#     },
-# }
-
 # Application definition
+
 SITE_ID = 1
 
 INSTALLED_APPS = [
@@ -54,14 +44,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
-    'preferences',
     'frontend',
     'site_parser',
     'search_api',
     'djcelery',
-    # 'urls_manage',
-    'rest_framework',
     'django_hstore',
+    'dbsettings',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -189,5 +177,3 @@ STATICFILES_DIRS = [
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
-
-SITE_ID=1

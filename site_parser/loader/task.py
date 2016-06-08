@@ -4,16 +4,12 @@ import time
 
 from bs4 import BeautifulSoup
 from langdetect import detect
-from preferences import preferences
 
-from site_parser.loader.urlnorm import UrlNorm
 from site_parser.loader.utils import Utils, QueueItem
+from site_parser.models import settings
 
 
 class UrlLoaderTask(threading.Thread):
-    REQUEST_TIMEOUT = 5
-    # REQUEST_TIMEOUT = preferences.ParserPreferences.request_timeout
-
     def __init__(self, que, url_manager, site, coord):
         threading.Thread.__init__(self)
         self._queue = que
@@ -76,7 +72,7 @@ class UrlLoaderTask(threading.Thread):
             url, depth = queue_item.url, queue_item.depth
             logger.info('url parsing: %s' % url)
 
-            raw_html = Utils.download_url(url, self.REQUEST_TIMEOUT)
+            raw_html = Utils.download_url(url, settings.REQUEST_MAX_TIMEOUT)
             if raw_html:
                 soup = BeautifulSoup(raw_html, 'lxml')
                 self._process_new_links(url, soup, depth)

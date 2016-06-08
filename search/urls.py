@@ -20,6 +20,7 @@ from search_api.views import SearchReceiveView, AddUrlsReceiveView
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^settings/', include('dbsettings.urls')),
     url(r'^api/urls', AddUrlsReceiveView.as_view(), name='api_add_urls'),
     url(r'^api/search/', SearchReceiveView.as_view(), name='api_search'),
     url(r'^', include('frontend.urls')),

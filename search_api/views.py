@@ -1,5 +1,3 @@
-import json
-
 from django.http import HttpResponse
 from django.http import JsonResponse
 
@@ -7,10 +5,9 @@ from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
-from preferences import preferences
 
 from search_api.utils import Snippet, ApiUtils
-from site_parser.models import Page, WebSite
+from site_parser.models import Page, WebSite, settings
 from site_parser.utils import convert_to_int
 
 from site_parser.tasks import start_parser
@@ -18,9 +15,6 @@ import json
 
 
 class SearchReceiveView(View):
-    # PAGE_LIMIT = preferences.APIPreferences.search_page_limit
-    PAGE_LIMIT = 10
-
     @staticmethod
     def get(request):
         query = request.GET.get('q', None)
@@ -53,7 +47,7 @@ class SearchReceiveView(View):
         if query_lang:
             all_results = all_results.filter(lang=query_lang)
 
-        limit = SearchReceiveView.PAGE_LIMIT
+        limit = settings.SEARCH_PAGE_LIMIT
         results = all_results[start:start + limit]
 
         snippet = Snippet(query)
@@ -77,9 +71,6 @@ class SearchReceiveView(View):
 
 
 class AddUrlsReceiveView(View):
-    # UPLOAD_MAX_SIZE = preferences.APIPreferences.urls_upload_size_limit
-    UPLOAD_MAX_SIZE =1024*20
-
     @staticmethod
     def get(request):
         start_url = request.GET.get('url', None)
@@ -101,7 +92,7 @@ class AddUrlsReceiveView(View):
 
         urls_data = json.loads(json_data.decode('utf8'))
 
-        if urls_data and len(json_data) <= self.UPLOAD_MAX_SIZE:
+        if urls_data and len(json_data) <= settings.URLS_UPLOAD_MAX_SIZE:
             depth, urls = ApiUtils.parse_urls_data(urls_data)
 
         if not urls:
@@ -111,7 +102,6 @@ class AddUrlsReceiveView(View):
             start_parser.delay(url, depth)
 
         return HttpResponse(status=200)
-
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
