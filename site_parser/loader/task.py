@@ -27,13 +27,17 @@ class UrlLoaderTask(threading.Thread):
         else:
             return True
 
-    def _process_new_links(self, soup, depth):
+    def _process_new_links(self, url, soup, depth):
         if depth + 1 > self._coord.depth_limit:
             return
 
         domain = self._site.domain
-        hrefs = Utils.filter_links_from_domain(soup.find_all('a'), domain)
-        for href in hrefs:
+        url_domain_hrefs, all_hrefs = \
+            Utils.filter_links_from_domain(soup.find_all('a'), domain)
+
+        for href in all_hrefs:
+            self._url_manager.connect_urls(url, href)
+        for href in url_domain_hrefs:
             if href not in self._url_manager:
                 self._url_manager.add(href)
                 queue_url = QueueItem(href, depth=depth + 1)
@@ -60,7 +64,7 @@ class UrlLoaderTask(threading.Thread):
             raw_html = Utils.download_url(url, self.REQUEST_TIMEOUT)
             if raw_html:
                 soup = BeautifulSoup(raw_html, 'lxml')
-                self._process_new_links(soup, depth)
+                self._process_new_links(url, soup, depth)
 
                 page_model = Utils.get_or_create_page_model(url)
                 page_model.text = Utils.clean_text(soup)
