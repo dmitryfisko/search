@@ -8,7 +8,7 @@ from site_parser.loader.utils import QueueItem, Utils, UNLIMITED_DEPTH, UrlManag
 
 class SiteLoader:
     # QUEUE_MAX_SIZE = 100
-    WORKER_POOL_SIZE = 10
+    WORKER_POOL_SIZE = 20
 
     def __init__(self, coordinator):
         self._coord = coordinator
@@ -31,8 +31,8 @@ class SiteLoader:
 
     @staticmethod
     def _add_first_queue_item(url, que, url_manager):
+        _, url = url_manager.add_canonize(url)
         queue_item = QueueItem(url, 0)
-        url_manager.add(url)
         que.put(queue_item)
 
     def start(self, start_url):

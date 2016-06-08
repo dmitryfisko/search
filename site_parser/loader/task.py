@@ -3,6 +3,7 @@ import threading
 import time
 
 from bs4 import BeautifulSoup
+from langdetect import detect
 
 from site_parser.loader.urlnorm import UrlNorm
 from site_parser.loader.utils import Utils, QueueItem
@@ -28,24 +29,32 @@ class UrlLoaderTask(threading.Thread):
         else:
             return True
 
+    @staticmethod
+    def _extract_lang(text):
+        try:
+            lang = detect(text)
+        except:
+            lang = '--'
+        return lang
+
     def _process_new_links(self, url, soup, depth):
         if depth + 1 > self._coord.depth_limit:
             return
 
         domain = self._site.domain
         url_domain_hrefs, all_hrefs = \
-            Utils.filter_links_from_domain(soup.find_all('a'), domain)
+            Utils.filter_links_from_domain(self._url_manager,
+                                           soup.find_all('a'), domain)
 
-        for href in all_hrefs:
-            try:
-                self._url_manager.connect_urls(url, href)
-            except UrlNorm.InvalidUrl:
-                pass
         for href in url_domain_hrefs:
             if href not in self._url_manager:
                 self._url_manager.add(href)
                 queue_url = QueueItem(href, depth=depth + 1)
                 self._queue.put(queue_url)
+
+        for href in all_hrefs:
+            self._url_manager.connect_urls(url, href)
+
 
     def run(self):
         logger = logging.getLogger('site_parser')
@@ -73,7 +82,9 @@ class UrlLoaderTask(threading.Thread):
                 page_model = Utils.get_or_create_page_model(url)
                 page_model.text = Utils.clean_text(soup)
                 page_model.title = soup.title.string
+                page_model.lang = self._extract_lang(page_model.title)
                 page_model.save()
+                self._site.pages.add(page_model)
 
             logger.info('url parsed: %s' % url)
             self._is_active_job = False

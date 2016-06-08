@@ -3,10 +3,12 @@ from djorm_pgfulltext.models import SearchManager
 from djorm_pgfulltext.fields import VectorField
 from django.db import models
 
+
 class Page(models.Model):
     url = models.CharField(max_length=255, primary_key=True)
     title = models.CharField(max_length=255, blank=True)
     text = models.TextField(blank=True)
+    lang = models.CharField(max_length=2, blank=True)
     search_index = VectorField()
 
     objects = models.Manager()

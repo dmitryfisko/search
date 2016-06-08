@@ -1,7 +1,11 @@
+import json
 import string
 
 import ahocorasick
 from nltk import word_tokenize
+
+from site_parser.loader.utils import Utils
+from site_parser.utils import fix_schema
 
 
 class Snippet:
@@ -80,3 +84,38 @@ class Snippet:
             snippet += '...'
 
         return Snippet.normalize_snippet(snippet)
+
+
+class ApiUtils:
+    @staticmethod
+    def extract_query_params(query):
+        filtered_tokens = []
+        params = {}
+        tokens = query.split(' ')
+        for token in tokens:
+            colon_ind = token.find(':')
+            if colon_ind != -1:
+                special = token[:colon_ind]
+                value = token[colon_ind + 1:]
+                if special == 'site':
+                    site = fix_schema(value)
+                    domain = Utils.extract_domain(site)
+                    params[special] = domain
+                elif special == 'lang' and len(value) == 2:
+                    params[special] = value
+            else:
+                filtered_tokens.append(token)
+        return ' '.join(filtered_tokens), params
+
+    @staticmethod
+    def parse_urls_file(file):
+        content = json.load(file)
+        return ApiUtils.parse_urls_data(content)
+
+    @staticmethod
+    def parse_urls_data(content):
+        depth = content.get['depth']
+        urls = content.get['urls']
+        if urls and all(isinstance(url, str) for url in urls):
+            urls = None
+        return depth, urls
