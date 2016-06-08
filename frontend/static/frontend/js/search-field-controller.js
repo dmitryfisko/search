@@ -17,7 +17,7 @@ app.controller('SearchFieldController', function($http, $window, $state,
         ).error(function(response) {
             console.log('vse huevo')
         });
-        
+
     }
 
     var searchResults = [];
