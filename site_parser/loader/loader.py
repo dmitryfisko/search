@@ -31,8 +31,8 @@ class SiteLoader:
 
     @staticmethod
     def _add_first_queue_item(url, que, url_manager):
+        _, url = url_manager.add_canonize(url)
         queue_item = QueueItem(url, 0)
-        url_manager.add(url)
         que.put(queue_item)
 
     def start(self, start_url):

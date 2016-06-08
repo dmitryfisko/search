@@ -62,13 +62,15 @@ class UrlManager:
         self._lock = RLock()
 
     def __contains__(self, url):
-        url = self._url_norm.canonize(url)
         url_was = url in self.urls
         if self.is_use_robots:
             url_allowed = self._rules.allowed(url, self.USER_AGENT)
             return url_was or not url_allowed
         else:
             return url_was
+
+    def canonize(self, url):
+        return self._url_norm.canonize(url)
 
     def add(self, url):
         ind = self.urls.get(url)
@@ -79,10 +81,12 @@ class UrlManager:
             self.urls[url] = ind
         return ind
 
-    def connect_urls(self, url1, url2):
-        url1 = self._url_norm.canonize(url1)
-        url2 = self._url_norm.canonize(url2)
+    def add_canonize(self, url):
+        url = self.canonize(url)
+        ind = self.add(url)
+        return ind, url
 
+    def connect_urls(self, url1, url2):
         ind1 = self.add(url1)
         ind2 = self.add(url2)
 
@@ -145,13 +149,20 @@ class Utils:
         return urlparse(url).netloc
 
     @staticmethod
-    def filter_links_from_domain(links, domain):
+    def filter_links_from_domain(url_manager, links, domain):
         filtered_hrefs = []
         all_hrefs = []
         for link in links:
             url = link.get('href')
             if not url:
                 continue
+
+            try:
+                url = url_manager.canonize(url)
+            except UrlNorm.InvalidUrl:
+                continue
+
+            url = url_manager.canonize(url)
             all_hrefs.append(url)
             if Utils.extract_domain(url) == domain:
                 filtered_hrefs.append(url)

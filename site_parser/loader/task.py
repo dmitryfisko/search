@@ -43,7 +43,8 @@ class UrlLoaderTask(threading.Thread):
 
         domain = self._site.domain
         url_domain_hrefs, all_hrefs = \
-            Utils.filter_links_from_domain(soup.find_all('a'), domain)
+            Utils.filter_links_from_domain(self._url_manager,
+                                           soup.find_all('a'), domain)
 
         for href in url_domain_hrefs:
             if href not in self._url_manager:
@@ -52,10 +53,8 @@ class UrlLoaderTask(threading.Thread):
                 self._queue.put(queue_url)
 
         for href in all_hrefs:
-            try:
-                self._url_manager.connect_urls(url, href)
-            except UrlNorm.InvalidUrl:
-                pass
+            self._url_manager.connect_urls(url, href)
+
 
     def run(self):
         logger = logging.getLogger('site_parser')
