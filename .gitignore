@@ -5,5 +5,3 @@ testenv/
 __pycache__
 search/.env
 logs/site_parser.log
-
-

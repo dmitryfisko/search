@@ -30,7 +30,7 @@ function SearchResultsService() {
 
     var initResults = function(data) {
         results = data;
-    }
+    };
 
     return {
         getResults: getResults,
