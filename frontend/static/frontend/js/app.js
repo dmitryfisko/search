@@ -13,6 +13,11 @@ app.config(function ($stateProvider, $urlRouterProvider, $httpProvider) {
         url: "/results",
         templateUrl: "/static/frontend/html/results.html",
         controller: 'SearchResultsController'
+    })
+    .state('add_urls', {
+        url: "/add_urls",
+        templateUrl: "/static/frontend/html/add_urls.html",
+        controller: 'AddUrlsController'
     });
     $httpProvider.defaults.xsrfCookieName = 'csrftoken';
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';

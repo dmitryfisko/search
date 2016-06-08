@@ -163,7 +163,7 @@ body {
 }
 
 /* My css */
-.search-field {
+.awesome-button {
     margin: 20px;
 }
 
@@ -203,6 +203,10 @@ body {
 
 .pagination a {
     cursor: pointer;
+}
+
+.url_area {
+    resize: none;
 }
 
 /*
