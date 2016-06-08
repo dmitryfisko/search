@@ -32,15 +32,18 @@ class SearchReceiveView(View):
     @staticmethod
     def generate_response(query, start, request):
         limit = SearchReceiveView.PAGE_LIMIT
-        results = Page.search_manager.search(query)[start:start+limit]
+        all_results = Page.search_manager.search(query)
+        results = all_results[start:start+limit]
 
         snippet = Snippet(query)
-        response = {'response': []}
+        response = {'response': {'results': [],
+                                 'limit': limit,
+                                 'count': len(all_results)}}
         for res in results:
             item = {'title': res.title,
                     'url': res.url,
                     'snippet': snippet.make_snippet(res.text)}
-            response['response'].append(item)
+            response['response']['results'].append(item)
 
         # response = render_to_response('search_api.html',
         #                               {'results': results},
