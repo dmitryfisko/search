@@ -122,6 +122,8 @@ class SiteMapReceiveView(View):
                 site_pages = WebSite.objects.get(domain=domain).pages.all()
                 urls = site_pages.values_list('url', flat=True)
                 tree = ApiUtils.build_site_map(start_url, urls)
-            return JsonResponse(tree)
+            else:
+                tree = {}
+            return JsonResponse(tree, safe=False)
         else:
             return HttpResponse(status=400)
