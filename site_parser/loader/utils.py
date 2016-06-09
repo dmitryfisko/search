@@ -145,7 +145,10 @@ class Utils:
 
     @staticmethod
     def extract_domain(url):
-        return urlparse(url).netloc
+        domain = urlparse(url).netloc
+        if domain.startswith('www.'):
+            domain = domain[4:]
+        return domain
 
     @staticmethod
     def filter_links_from_domain(url_manager, links, domain):
