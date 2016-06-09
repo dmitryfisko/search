@@ -177,5 +177,5 @@ class ApiUtils:
         except TypeError:
             level = {}
 
-        tree = [ApiUtils._tree_build(root, level, start_url)]
+        tree = ApiUtils._tree_build(root, level, start_url)
         return tree
