@@ -135,11 +135,12 @@ class ApiUtils:
     @staticmethod
     def _tree_build(ver, level):
         if not level:
+            ver['size'] = random.randint(1, 10000)
             return ver
 
         ver['children'] = []
         for key in level.keys():
-            child = {'name': key, 'size': random.randint(1, 10000)}
+            child = {'name': key}
             child = ApiUtils._tree_build(child, level[key])
             ver['children'].append(child)
 
