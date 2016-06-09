@@ -385,8 +385,8 @@ function onClick() {
         return;
     }
     var statusCode;
-    $.get('/api/sitemap?url=' + url, function(data, status) {
-        // json_string = data['response'];
+    $.get('/api/map?url=' + url, function(data, status) {
+        json_string = data['response'];
         statusCode = status;
     });
     if (statusCode != 200) {
