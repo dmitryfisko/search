@@ -393,10 +393,11 @@ function onClick() {
         return;
     }
     $('body').empty();
-    drawMap();
+    drawMap(json_string);
 }
 
 function drawMap(json_string) {
+    debugger
     var diameter = 960;
 
     var tree = d3.layout.tree()
