@@ -9,6 +9,8 @@ from nltk import word_tokenize
 from site_parser.loader.utils import Utils
 from site_parser.utils import fix_schema
 
+import random
+
 
 class Snippet:
     SNIPPET_MAX_LEN = 200
@@ -131,14 +133,14 @@ class ApiUtils:
         return domain
 
     @staticmethod
-    def _tree_build(ver, level, parent_name):
+    def _tree_build(ver, level):
         if not level:
             return ver
 
         ver['children'] = []
         for key in level.keys():
-            child = {'name': key, 'parent': parent_name}
-            child = ApiUtils._tree_build(child, level[key], key)
+            child = {'name': key, 'size': random.randint(1, 10000)}
+            child = ApiUtils._tree_build(child, level[key])
             ver['children'].append(child)
 
         return ver
@@ -167,8 +169,7 @@ class ApiUtils:
                     level[token] = {}
                 level = level[token]
 
-        root = {"name": start_url,
-                "parent": "null"}
+        root = {"name": start_url}
         root_tokens = ApiUtils._tokenize_url_path(start_url)
         try:
             level = site_map
@@ -177,5 +178,5 @@ class ApiUtils:
         except TypeError:
             level = {}
 
-        tree = ApiUtils._tree_build(root, level, start_url)
+        tree = ApiUtils._tree_build(root, level)
         return tree
