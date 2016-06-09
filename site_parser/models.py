@@ -9,7 +9,7 @@ import dbsettings
 class ParserSettings(dbsettings.Group):
     WORKER_POOL_SIZE = dbsettings.PositiveIntegerValue(default=20)
     REQUEST_MAX_TIMEOUT = dbsettings.PositiveIntegerValue(default=5)
-    REQUEST_MIN_DELAY = dbsettings.FloatValue(default=0.5)
+    REQUEST_MIN_DELAY = dbsettings.FloatValue(default=0.1)
 
 settings = ParserSettings('Parser Settings')
 

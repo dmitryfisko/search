@@ -6,8 +6,9 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
+from search_api.models import settings
 from search_api.utils import Snippet, ApiUtils
-from site_parser.models import Page, WebSite, settings
+from site_parser.models import Page, WebSite
 from site_parser.utils import convert_to_int
 
 from site_parser.tasks import start_parser
