@@ -38,7 +38,7 @@ class WebSite(models.Model):
     pages = models.ManyToManyField(Page)
 
     graph_urls = hstore.DictionaryField()
-    graph_connections = hstore.DictionaryField()
+    graph_external = hstore.DictionaryField()
     objects = hstore.HStoreManager()
 
     def __str__(self):

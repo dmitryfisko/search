@@ -150,7 +150,7 @@ class Utils:
     @staticmethod
     def filter_links_from_domain(url_manager, links, domain):
         filtered_hrefs = []
-        all_hrefs = []
+        external_hrefs = []
         for link in links:
             url = link.get('href')
             if not url:
@@ -162,7 +162,8 @@ class Utils:
                 continue
 
             url = url_manager.canonize(url)
-            all_hrefs.append(url)
             if Utils.extract_domain(url) == domain:
                 filtered_hrefs.append(url)
-        return filtered_hrefs, all_hrefs
+            else:
+                external_hrefs.append(url)
+        return filtered_hrefs, external_hrefs

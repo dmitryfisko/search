@@ -40,7 +40,7 @@ class UrlLoaderTask(threading.Thread):
             return
 
         domain = self._site.domain
-        url_domain_hrefs, all_hrefs = \
+        url_domain_hrefs, external_hrefs = \
             Utils.filter_links_from_domain(self._url_manager,
                                            soup.find_all('a'), domain)
 
@@ -50,7 +50,7 @@ class UrlLoaderTask(threading.Thread):
                 queue_url = QueueItem(href, depth=depth + 1)
                 self._queue.put(queue_url)
 
-        for href in all_hrefs:
+        for href in external_hrefs:
             self._url_manager.connect_urls(url, href)
 
 
