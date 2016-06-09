@@ -16,12 +16,13 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 
-from search_api.views import SearchReceiveView, AddUrlsReceiveView
+from search_api.views import SearchReceiveView, AddUrlsReceiveView, SiteMapReceiveView
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^settings/', include('dbsettings.urls')),
     url(r'^api/urls', AddUrlsReceiveView.as_view(), name='api_add_urls'),
     url(r'^api/search/', SearchReceiveView.as_view(), name='api_search'),
+    url(r'^api/map/', SiteMapReceiveView.as_view(), name='api_build_map'),
     url(r'^', include('frontend.urls')),
 ]

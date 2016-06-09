@@ -9,7 +9,7 @@ from django.views.generic import View
 from search_api.models import settings
 from search_api.utils import Snippet, ApiUtils
 from site_parser.models import Page, WebSite
-from site_parser.utils import convert_to_int
+from site_parser.utils import convert_to_int, fix_schema
 
 from site_parser.tasks import start_parser
 import json
@@ -107,3 +107,21 @@ class AddUrlsReceiveView(View):
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
         return super(AddUrlsReceiveView, self).dispatch(request, *args, **kwargs)
+
+
+class SiteMapReceiveView(View):
+    @staticmethod
+    def get(request):
+        start_url = request.GET.get('url', None)
+
+        start_url = fix_schema(start_url)
+        domain = ApiUtils.extract_domain(start_url)
+        if start_url:
+            site_filter = WebSite.objects.filter(domain=domain)
+            if site_filter.exists():
+                site_pages = WebSite.objects.get(domain=domain).pages.all()
+                urls = site_pages.values_list('url', flat=True)
+                tree = ApiUtils.build_site_map(start_url, urls)
+            return JsonResponse(tree)
+        else:
+            return HttpResponse(status=400)

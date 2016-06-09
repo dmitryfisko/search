@@ -2,6 +2,8 @@ import json
 import string
 
 import ahocorasick
+from urllib.parse import urlparse
+
 from nltk import word_tokenize
 
 from site_parser.loader.utils import Utils
@@ -98,8 +100,7 @@ class ApiUtils:
                 special = token[:colon_ind]
                 value = token[colon_ind + 1:]
                 if special == 'site':
-                    site = fix_schema(value)
-                    domain = Utils.extract_domain(site)
+                    domain = ApiUtils.extract_domain(value)
                     params[special] = domain
                 elif special == 'lang' and len(value) == 2:
                     params[special] = value
@@ -122,3 +123,59 @@ class ApiUtils:
         if urls and not all(isinstance(url, str) for url in urls):
             urls = None
         return depth, urls
+
+    @staticmethod
+    def extract_domain(url):
+        site = fix_schema(url)
+        domain = Utils.extract_domain(site)
+        return domain
+
+    @staticmethod
+    def _tree_build(ver, level, parent_name):
+        if not level:
+            return ver
+
+        ver['children'] = []
+        for key in level.keys():
+            child = {'name': key, 'parent': parent_name}
+            child = ApiUtils._tree_build(child, level[key], key)
+            ver['children'].append(child)
+
+        return ver
+
+    @staticmethod
+    def _tokenize_url_path(url):
+        url_path = urlparse(url).path.strip('/')
+        url_path_tokens = url_path.split('/')
+        if not url_path_tokens[0]:
+            return []
+        return url_path_tokens
+
+    @staticmethod
+    def build_site_map(start_url, urls):
+        site_map = {}
+        urls_tokens = []
+        for url in urls:
+            url_tokens = ApiUtils._tokenize_url_path(url)
+            urls_tokens.append(url_tokens)
+
+        for ind, url_tokens in reversed(list(enumerate(urls_tokens))):
+            level = site_map
+            for token in url_tokens:
+                cur_val = level.get(token)
+                if not cur_val:
+                    level[token] = {}
+                level = level[token]
+
+        root = {"name": start_url,
+                "parent": "null"}
+        root_tokens = ApiUtils._tokenize_url_path(start_url)
+        try:
+            level = site_map
+            for token in root_tokens:
+                level = level[token]
+        except TypeError:
+            level = {}
+
+        tree = [ApiUtils._tree_build(root, level, start_url)]
+        return tree
