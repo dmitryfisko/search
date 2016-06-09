@@ -54,7 +54,10 @@ class Snippet:
         entries = []
         for entry in self._automaton.iter(text.lower()):
             entries.append(entry)
-        longest_entry = max(entries, key=lambda x: x[1])
+        if entries:
+            longest_entry = max(entries, key=lambda x: x[1])
+        else:
+            longest_entry = (len(text) // 2, 10)
 
         left_side = longest_entry[0] - longest_entry[1] + 1
         right_side = longest_entry[0]

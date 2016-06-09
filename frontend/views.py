@@ -5,8 +5,5 @@ from django.http import HttpResponse
 def index(request):
     return render(request, 'frontend/index.html')
 
-def results(request):
-    return render(request, 'frontend/results.html')
-
 def sitemap(request):
     return render(request, 'frontend/sitemap.html')
